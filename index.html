@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Form Simpan Data (localStorage)</title>
+</head>
+<body>
+  <h1>Daftar</h1>
+  <form id="regForm">
+    <label>Nama: <input type="text" name="nama" required /></label><br/>
+    <label>Email: <input type="email" name="email" required /></label><br/>
+    <button type="submit">Daftar</button>
+  </form>
+
+  <h2>Data Tersimpan</h2>
+  <ul id="list"></ul>
+
+  <script>
+    const form = document.getElementById('regForm');
+    const list = document.getElementById('list');
+
+    function loadList() {
+      const raw = localStorage.getItem('daftar') || '[]';
+      const data = JSON.parse(raw);
+      list.innerHTML = data.map((d, i) => `<li>${i+1}. ${d.nama} — ${d.email}</li>`).join('');
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const obj = {};
+      for (const [k, v] of fd.entries()) obj[k] = v;
+      const raw = localStorage.getItem('daftar') || '[]';
+      const data = JSON.parse(raw);
+      data.push(obj);
+      localStorage.setItem('daftar', JSON.stringify(data));
+      form.reset();
+      loadList();
+      alert('Tersimpan di browser (localStorage).');
+    });
+
+    loadList();
+  </script>
+</body>
+</html>
