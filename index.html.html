@@ -1,0 +1,3057 @@
+<!doctype html>
+<html lang="id" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistem Manajemen Kelas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+      font-family: 'Outfit', sans-serif;
+    }
+    
+    .gradient-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .gradient-success {
+      background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+    }
+    
+    .gradient-warning {
+      background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    }
+    
+    .gradient-info {
+      background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+    }
+    
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .glass-dark {
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .bg-pattern {
+      background-color: #f8f9fa;
+      background-image: 
+        radial-gradient(at 40% 20%, rgba(102, 126, 234, 0.1) 0px, transparent 50%),
+        radial-gradient(at 80% 0%, rgba(118, 75, 162, 0.1) 0px, transparent 50%),
+        radial-gradient(at 0% 50%, rgba(132, 250, 176, 0.1) 0px, transparent 50%);
+    }
+    
+    .input-modern {
+      background: rgba(102, 126, 234, 0.05);
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+    }
+    
+    .input-modern:focus {
+      background: white;
+      border-color: #667eea;
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+    
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+    
+    .card-hover:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.5s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .slide-in-right {
+      animation: slideInRight 0.3s ease-out;
+    }
+    
+    @keyframes slideInRight {
+      from { transform: translateX(100%); }
+      to { transform: translateX(0); }
+    }
+    
+    .popup-animation {
+      animation: popupScale 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    @keyframes popupScale {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.7);
+      }
+      100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+    
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .scrollbar-custom::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    
+    .scrollbar-custom::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.05);
+      border-radius: 10px;
+    }
+    
+    .scrollbar-custom::-webkit-scrollbar-thumb {
+      background: rgba(102, 126, 234, 0.3);
+      border-radius: 10px;
+    }
+    
+    .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+      background: rgba(102, 126, 234, 0.5);
+    }
+    
+    .chat-bubble-sent {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 18px 18px 4px 18px;
+    }
+    
+    .chat-bubble-received {
+      background: white;
+      border-radius: 18px 18px 18px 4px;
+    }
+    
+    .avatar-ring {
+      box-shadow: 0 0 0 3px white, 0 0 0 6px #667eea;
+    }
+    
+    .badge-admin {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+    
+    .badge-ketua {
+      background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+    }
+    
+    .badge-wakil_ketua {
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      color: #1e293b !important;
+    }
+
+    .badge-bendahara {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    .badge-sekretaris {
+      background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    }
+
+    .badge-anggota {
+      background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    }
+    
+    .modal-overlay {
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+    }
+    
+    .pulse-dot {
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .loading-spinner {
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top: 3px solid white;
+      width: 20px;
+      height: 20px;
+      animation: spin 0.8s linear infinite;
+    }
+
+    .loading-overlay {
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(2px);
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .tooltip {
+      position: relative;
+    }
+
+    .tooltip::before {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-8px);
+      background: rgba(0, 0, 0, 0.9);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s, transform 0.3s;
+      z-index: 1000;
+    }
+
+    .tooltip::after {
+      content: '';
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-2px);
+      border: 5px solid transparent;
+      border-top-color: rgba(0, 0, 0, 0.9);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s, transform 0.3s;
+      z-index: 1000;
+    }
+
+    .tooltip:hover::before,
+    .tooltip:hover::after {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-4px);
+    }
+
+    @media (max-width: 640px) {
+      .modal-content-mobile {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 0;
+        max-height: 100%;
+        overflow-y: auto;
+      }
+    }
+
+    .dark-mode {
+      background-color: #0f172a;
+      color: #e2e8f0;
+    }
+
+    .dark-mode .bg-pattern {
+      background-color: #0f172a;
+      background-image: 
+        radial-gradient(at 40% 20%, rgba(102, 126, 234, 0.15) 0px, transparent 50%),
+        radial-gradient(at 80% 0%, rgba(118, 75, 162, 0.15) 0px, transparent 50%);
+    }
+
+    .dark-mode .glass-effect {
+      background: rgba(30, 41, 59, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .dark-mode .bg-white {
+      background-color: #1e293b;
+    }
+
+    .dark-mode .text-gray-800 {
+      color: #f1f5f9;
+    }
+
+    .dark-mode .text-gray-700 {
+      color: #cbd5e1;
+    }
+
+    .dark-mode .text-gray-600 {
+      color: #94a3b8;
+    }
+
+    .dark-mode .text-gray-500 {
+      color: #64748b;
+    }
+
+    .dark-mode .border-gray-200,
+    .dark-mode .border-gray-300 {
+      border-color: #334155;
+    }
+
+    .dark-mode .hover\:bg-gray-100:hover {
+      background-color: #334155;
+    }
+
+    .dark-mode .chat-bubble-received {
+      background: #334155;
+      color: #e2e8f0;
+      border-color: #475569;
+    }
+
+    .dark-mode .input-modern {
+      background: rgba(102, 126, 234, 0.1);
+      color: #e2e8f0;
+    }
+
+    .dark-mode .input-modern::placeholder {
+      color: #64748b;
+    }
+    
+    .chart-container {
+      position: relative;
+      height: 300px;
+      margin-top: 20px;
+    }
+    
+    .notif-unread {
+      background: rgba(102, 126, 234, 0.1);
+      border-left: 4px solid #667eea;
+    }
+    
+    .notif-read {
+      background: rgba(148, 163, 184, 0.05);
+      opacity: 0.7;
+    }
+
+    .delete-confirm-btn {
+      background: #ef4444;
+    }
+
+    .delete-confirm-btn:hover {
+      background: #dc2626;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body class="h-full bg-pattern">
+  <div id="app" class="h-full overflow-auto scrollbar-custom"><!-- LOGIN PAGE -->
+   <div id="page-login" class="min-h-full flex items-center justify-center p-4">
+    <div class="w-full max-w-md fade-in">
+     <div class="glass-effect rounded-3xl shadow-2xl overflow-hidden">
+      <div class="gradient-primary p-8 text-center">
+       <div class="w-20 h-20 mx-auto mb-4 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-lg">
+        <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+       </div>
+       <h1 id="login-title" class="text-3xl font-bold text-white mb-2">Sistem Manajemen Kelas</h1>
+       <p id="login-subtitle" class="text-white/80">Selamat datang! Silakan masuk atau daftar</p>
+      </div>
+      <div class="p-8">
+       <div class="flex gap-2 mb-6 p-1 bg-gray-100 rounded-xl"><button id="tab-login" class="flex-1 py-2 px-4 rounded-lg font-semibold transition-all bg-white shadow-sm text-purple-600"> Masuk </button> <button id="tab-register" class="flex-1 py-2 px-4 rounded-lg font-semibold transition-all text-gray-600 hover:text-purple-600"> Daftar </button>
+       </div>
+       <form id="form-login" class="space-y-4">
+        <div><label for="login-username" class="block text-sm font-semibold text-gray-700 mb-2">Username atau Email</label> <input type="text" id="login-username" class="input-modern w-full px-4 py-3 rounded-xl" placeholder="Masukkan username atau email" required>
+        </div>
+        <div><label for="login-password" class="block text-sm font-semibold text-gray-700 mb-2">Password</label> <input type="password" id="login-password" class="input-modern w-full px-4 py-3 rounded-xl" placeholder="Masukkan password" required>
+        </div><button type="submit" class="btn-primary w-full py-3 rounded-xl font-bold text-white shadow-lg"> Masuk </button>
+       </form>
+       <form id="form-register" class="space-y-4 hidden">
+        <div><label for="register-fullname" class="block text-sm font-semibold text-gray-700 mb-2">Nama Lengkap</label> <input type="text" id="register-fullname" class="input-modern w-full px-4 py-3 rounded-xl" placeholder="Nama lengkap" required>
+        </div>
+        <div><label for="register-username" class="block text-sm font-semibold text-gray-700 mb-2">Username</label> <input type="text" id="register-username" class="input-modern w-full px-4 py-3 rounded-xl" placeholder="Username unik" required>
+        </div>
+        <div><label for="register-email" class="block text-sm font-semibold text-gray-700 mb-2">Email</label> <input type="email" id="register-email" class="input-modern w-full px-4 py-3 rounded-xl" placeholder="email@contoh.com" required>
+        </div>
+        <div><label for="register-password" class="block text-sm font-semibold text-gray-700 mb-2">Password</label> <input type="password" id="register-password" class="input-modern w-full px-4 py-3 rounded-xl" placeholder="Minimal 6 karakter" required minlength="6">
+        </div><button type="submit" class="btn-primary w-full py-3 rounded-xl font-bold text-white shadow-lg"> Daftar Sekarang </button>
+       </form>
+      </div>
+     </div>
+    </div>
+   </div><!-- HOME PAGE -->
+   <div id="page-home" class="min-h-full hidden">
+    <header class="bg-white shadow-sm sticky top-0 z-40">
+     <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+       <div class="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+        </svg>
+       </div>
+       <h1 id="home-title" class="text-xl font-bold text-gray-800">Beranda</h1>
+      </div>
+      <div class="flex items-center gap-2"><button id="btn-notifications" class="tooltip relative p-2 hover:bg-gray-100 rounded-xl transition-colors" data-tooltip="Notifikasi">
+        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+        </svg><span id="notif-badge" class="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center hidden">0</span> </button> <button id="btn-dark-mode" class="tooltip p-2 hover:bg-gray-100 rounded-xl transition-colors" data-tooltip="Mode Gelap">
+        <svg id="icon-light" class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+        <svg id="icon-dark" class="w-6 h-6 text-gray-600 hidden" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+        </svg></button> <button id="btn-profile" class="tooltip flex items-center gap-2 hover:bg-gray-100 px-3 py-2 rounded-xl transition-colors" data-tooltip="Profil Saya">
+        <div id="user-avatar-header" class="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center text-white font-bold text-sm">
+         U
+        </div><span id="user-name-header" class="font-semibold text-gray-700 hidden sm:block">User</span> </button>
+      </div>
+     </div>
+    </header>
+    <main class="max-w-7xl mx-auto p-4 space-y-6">
+     <div class="gradient-primary rounded-3xl p-8 text-white shadow-xl">
+      <div class="flex items-center justify-between flex-wrap gap-4">
+       <div>
+        <h2 class="text-3xl font-bold mb-2"><span id="greeting-text">Selamat Datang!</span> 👋</h2>
+        <p id="welcome-user" class="text-white/90 text-lg">Senang melihat Anda kembali</p>
+       </div>
+       <div class="text-center bg-white/20 backdrop-blur-lg px-6 py-4 rounded-2xl">
+        <p class="text-sm text-white/80 mb-1">Tanggal Hari Ini</p>
+        <p id="current-date" class="text-xl font-bold">Loading...</p>
+       </div>
+      </div>
+     </div>
+     <div class="grid grid-cols-1 md:grid-cols-3 gap-4"><button id="btn-scroll-classes" class="bg-white rounded-2xl p-6 shadow-sm card-hover text-left transition-all hover:scale-105">
+       <div class="flex items-center gap-4">
+        <div class="w-12 h-12 gradient-success rounded-xl flex items-center justify-center">
+         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+         </svg>
+        </div>
+        <div>
+         <p class="text-sm text-gray-600">Kelas</p>
+         <p id="total-classes" class="text-2xl font-bold text-gray-800">0</p>
+        </div>
+       </div></button> <button id="btn-show-tasks" class="bg-white rounded-2xl p-6 shadow-sm card-hover text-left transition-all hover:scale-105">
+       <div class="flex items-center gap-4">
+        <div class="w-12 h-12 gradient-warning rounded-xl flex items-center justify-center">
+         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+         </svg>
+        </div>
+        <div>
+         <p class="text-sm text-gray-600">Tugas</p>
+         <p id="total-tasks" class="text-2xl font-bold text-gray-800">0</p>
+        </div>
+       </div></button> <button id="btn-show-messages" class="bg-white rounded-2xl p-6 shadow-sm card-hover text-left transition-all hover:scale-105">
+       <div class="flex items-center gap-4">
+        <div class="w-12 h-12 gradient-info rounded-xl flex items-center justify-center">
+         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+         </svg>
+        </div>
+        <div>
+         <p class="text-sm text-gray-600">Pesan</p>
+         <p id="new-messages" class="text-2xl font-bold text-gray-800">0</p>
+        </div>
+       </div></button>
+     </div>
+     <div id="classes-section">
+      <div class="flex items-center justify-between mb-4">
+       <h3 class="text-xl font-bold text-gray-800">Kelas Saya</h3><button id="btn-create-class" class="btn-primary px-6 py-2 rounded-xl font-semibold text-white flex items-center gap-2 shadow-lg">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        </svg> Buat Kelas Baru </button>
+      </div>
+      <div id="classes-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+       <div class="col-span-full text-center py-12 bg-white rounded-2xl">
+        <svg class="w-20 h-20 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+        </svg>
+        <p class="text-gray-500 font-semibold mb-2">Belum Ada Kelas</p>
+        <p class="text-gray-400 text-sm">Buat kelas pertama Anda untuk memulai</p>
+       </div>
+      </div>
+     </div>
+    </main>
+   </div><!-- CLASS PAGE -->
+   <div id="page-class" class="min-h-full hidden">
+    <header class="bg-white shadow-sm sticky top-0 z-40">
+     <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3"><button id="btn-back-home" class="p-2 hover:bg-gray-100 rounded-xl transition-colors">
+        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg></button>
+       <div>
+        <h1 id="class-name" class="text-xl font-bold text-gray-800">Nama Kelas</h1>
+        <p id="class-role-badge" class="text-xs text-gray-500">Role: Anggota</p>
+       </div>
+      </div>
+      <div class="flex gap-2"><button id="btn-recommend-member" class="tooltip p-2 hover:bg-gray-100 rounded-xl transition-colors hidden" data-tooltip="Rekomendasikan Anggota">
+        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+        </svg></button> <button id="btn-class-settings" class="tooltip p-2 hover:bg-gray-100 rounded-xl transition-colors" data-tooltip="Pengaturan Kelas">
+        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg></button>
+      </div>
+     </div>
+    </header>
+    <main class="max-w-7xl mx-auto p-4">
+     <div class="flex gap-2 mb-6 overflow-x-auto scrollbar-hide bg-white rounded-2xl p-2 shadow-sm"><button id="tab-info" class="class-tab px-6 py-3 rounded-xl font-semibold whitespace-nowrap transition-all gradient-primary text-white"> 📋 Pusat Informasi </button> <button id="tab-finance" class="class-tab px-6 py-3 rounded-xl font-semibold whitespace-nowrap transition-all text-gray-600 hover:bg-gray-100"> 💰 Keuangan Kas </button> <button id="tab-finance-history" class="class-tab px-6 py-3 rounded-xl font-semibold whitespace-nowrap transition-all text-gray-600 hover:bg-gray-100"> 📜 Riwayat Keuangan </button> <button id="tab-members" class="class-tab px-6 py-3 rounded-xl font-semibold whitespace-nowrap transition-all text-gray-600 hover:bg-gray-100"> 👥 Anggota </button> <button id="tab-chat" class="class-tab px-6 py-3 rounded-xl font-semibold whitespace-nowrap transition-all text-gray-600 hover:bg-gray-100"> 💬 Chat Room </button>
+     </div>
+     <div id="panel-info" class="space-y-4">
+      <div class="flex items-center justify-between">
+       <h3 class="text-xl font-bold text-gray-800">Daftar Tugas &amp; Informasi</h3><button id="btn-add-task" class="btn-primary px-4 py-2 rounded-xl font-semibold text-white text-sm flex items-center gap-2 hidden">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        </svg> Tambah Tugas </button>
+      </div>
+      <div id="tasks-list" class="space-y-3">
+       <div class="text-center py-12 bg-white rounded-2xl">
+        <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <p class="text-gray-500">Belum ada tugas atau informasi</p>
+       </div>
+      </div>
+     </div>
+     <div id="panel-finance" class="space-y-4 hidden">
+      <div class="flex gap-2 items-center justify-between flex-wrap"><select id="month-filter" class="input-modern px-4 py-2 rounded-xl"> <option value="all">Semua Bulan</option> </select>
+       <div class="flex gap-2"><button id="btn-view-chart" class="bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded-xl font-semibold text-white text-sm"> 📊 Grafik </button> <button id="btn-reset-finance" class="bg-orange-500 hover:bg-orange-600 px-4 py-2 rounded-xl font-semibold text-white text-sm hidden"> 🔄 Reset Keuangan </button> <button id="btn-archive-month" class="bg-orange-500 hover:bg-orange-600 px-4 py-2 rounded-xl font-semibold text-white text-sm hidden"> 📦 Arsipkan Bulan </button>
+       </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+       <div class="bg-white rounded-2xl p-6 shadow-sm">
+        <p class="text-sm text-gray-600 mb-1">Saldo Saat Ini</p>
+        <p id="class-balance" class="text-2xl font-bold text-purple-600">Rp 0</p>
+       </div>
+       <div class="bg-white rounded-2xl p-6 shadow-sm">
+        <p class="text-sm text-gray-600 mb-1">Total Pemasukan</p>
+        <p id="class-income" class="text-2xl font-bold text-green-600">Rp 0</p>
+       </div>
+       <div class="bg-white rounded-2xl p-6 shadow-sm">
+        <p class="text-sm text-gray-600 mb-1">Total Pengeluaran</p>
+        <p id="class-expense" class="text-2xl font-bold text-red-600">Rp 0</p>
+       </div>
+      </div>
+      <div class="flex items-center justify-between">
+       <h3 class="text-xl font-bold text-gray-800">Riwayat Transaksi</h3>
+       <div class="flex gap-2"><button id="btn-add-income" class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-xl font-semibold text-white text-sm hidden"> + Pemasukan </button> <button id="btn-add-expense" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-xl font-semibold text-white text-sm hidden"> - Pengeluaran </button>
+       </div>
+      </div>
+      <div id="finance-list" class="space-y-2">
+       <div class="text-center py-12 bg-white rounded-2xl">
+        <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <p class="text-gray-500">Belum ada transaksi keuangan</p>
+       </div>
+      </div>
+     </div>
+     <div id="panel-finance-history" class="space-y-4 hidden">
+      <div class="bg-white rounded-2xl p-6 shadow-sm">
+       <h3 class="text-xl font-bold text-gray-800 mb-4">Riwayat Keuangan per Bulan</h3>
+       <p class="text-sm text-gray-600 mb-4">Data yang direset akan tersimpan di sini sebagai arsip riwayat</p>
+       <div id="finance-history-list" class="space-y-3">
+        <div class="text-center py-8 text-gray-400">
+         <p>Belum ada riwayat keuangan</p>
+        </div>
+       </div>
+      </div>
+     </div>
+     <div id="panel-members" class="space-y-4 hidden">
+      <div class="flex items-center justify-between">
+       <h3 class="text-xl font-bold text-gray-800">Daftar Anggota</h3><button id="btn-invite-member" class="btn-primary px-4 py-2 rounded-xl font-semibold text-white text-sm hidden"> + Undang Anggota </button>
+      </div>
+      <div id="members-list-class" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+       <div class="col-span-full text-center py-12 bg-white rounded-2xl">
+        <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+        <p class="text-gray-500">Belum ada anggota</p>
+       </div>
+      </div>
+     </div>
+     <div id="panel-chat" class="hidden">
+      <div class="bg-white rounded-2xl shadow-sm h-[calc(100vh-250px)] flex flex-col">
+       <div class="p-4 border-b">
+        <h3 class="font-bold text-gray-800">Chat Room Kelas</h3>
+       </div>
+       <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-3 scrollbar-custom">
+        <div class="text-center text-gray-400 py-8">
+         <p>Belum ada pesan. Mulai percakapan!</p>
+        </div>
+       </div>
+       <form id="form-chat" class="p-4 border-t flex gap-2"><input type="text" id="chat-input" class="flex-1 input-modern px-4 py-3 rounded-xl" placeholder="Ketik pesan..."> <button type="submit" class="btn-primary px-6 py-3 rounded-xl">
+         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+         </svg></button>
+       </form>
+      </div>
+     </div>
+    </main>
+   </div><!-- MODALS -->
+   <div id="modal-create-class" class="fixed inset-0 z-50 hidden">
+    <div class="modal-overlay absolute inset-0" id="overlay-create-class"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-4 sm:p-4 max-h-[90vh] overflow-y-auto">
+     <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 popup-animation modal-content-mobile">
+      <h3 class="text-2xl font-bold text-gray-800 mb-6">Buat Kelas Baru</h3>
+      <form id="form-create-class" class="space-y-4">
+       <div><label for="class-name-input" class="block text-sm font-semibold text-gray-700 mb-2">Nama Kelas</label> <input type="text" id="class-name-input" class="input-modern w-full px-4 py-3 rounded-xl" placeholder="Contoh: XII IPA 1" required>
+       </div>
+       <div><label for="class-desc-input" class="block text-sm font-semibold text-gray-700 mb-2">Deskripsi</label> <textarea id="class-desc-input" class="input-modern w-full px-4 py-3 rounded-xl resize-none" rows="3" placeholder="Deskripsi kelas (opsional)"></textarea>
+       </div>
+       <div class="flex gap-3"><button type="button" id="btn-cancel-create-class" class="flex-1 py-3 rounded-xl font-semibold border-2 border-gray-300 hover:border-gray-400 transition-colors"> Batal </button> <button type="submit" class="flex-1 btn-primary py-3 rounded-xl font-semibold text-white flex items-center justify-center gap-2"> <span id="create-class-text">Buat Kelas</span>
+         <div id="create-class-spinner" class="loading-spinner hidden"></div></button>
+       </div>
+      </form>
+     </div>
+    </div>
+   </div>
+   <div id="modal-profile" class="fixed inset-0 z-50 hidden">
+    <div class="modal-overlay absolute inset-0" id="overlay-profile"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-4 sm:p-4 max-h-[90vh] overflow-y-auto">
+     <div class="bg-white rounded-3xl shadow-2xl overflow-hidden modal-content-mobile">
+      <div class="gradient-primary p-6 sm:p-8 text-center">
+       <div id="user-avatar-modal" class="w-24 h-24 mx-auto mb-4 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-lg text-white text-3xl font-bold">
+        U
+       </div>
+       <h3 id="user-name-modal" class="text-2xl font-bold text-white mb-1">User</h3>
+       <p id="user-email-modal" class="text-white/80">user@email.com</p>
+      </div>
+      <div class="p-6 sm:p-8 space-y-4">
+       <div><label for="edit-fullname" class="block text-sm font-semibold text-gray-700 mb-2">Nama Lengkap</label> <input type="text" id="edit-fullname" class="input-modern w-full px-4 py-3 rounded-xl">
+       </div>
+       <div><label for="edit-phone" class="block text-sm font-semibold text-gray-700 mb-2">No. Telepon</label> <input type="tel" id="edit-phone" class="input-modern w-full px-4 py-3 rounded-xl" placeholder="08xxxxxxxxxx">
+       </div>
+       <div class="flex gap-3 pt-4"><button id="btn-logout" class="flex-1 py-3 rounded-xl font-semibold bg-red-500 hover:bg-red-600 text-white transition-colors"> Logout </button> <button id="btn-save-profile" class="flex-1 btn-primary py-3 rounded-xl font-semibold text-white flex items-center justify-center gap-2"> <span id="save-profile-text">Simpan</span>
+         <div id="save-profile-spinner" class="loading-spinner hidden"></div></button>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+   <div id="modal-add-task" class="fixed inset-0 z-50 hidden">
+    <div class="modal-overlay absolute inset-0" id="overlay-add-task"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-4 sm:p-4 max-h-[90vh] overflow-y-auto">
+     <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 modal-content-mobile">
+      <h3 class="text-2xl font-bold text-gray-800 mb-6">Tambah Tugas Baru</h3>
+      <form id="form-add-task" class="space-y-4">
+       <div><label for="task-title-input" class="block text-sm font-semibold text-gray-700 mb-2">Judul Tugas</label> <input type="text" id="task-title-input" class="input-modern w-full px-4 py-3 rounded-xl" placeholder="Contoh: Tugas Matematika" required>
+       </div>
+       <div><label for="task-subject-input" class="block text-sm font-semibold text-gray-700 mb-2">Mata Pelajaran</label> <input type="text" id="task-subject-input" class="input-modern w-full px-4 py-3 rounded-xl" placeholder="Contoh: Matematika">
+       </div>
+       <div><label for="task-deadline-input" class="block text-sm font-semibold text-gray-700 mb-2">Deadline</label> <input type="date" id="task-deadline-input" class="input-modern w-full px-4 py-3 rounded-xl">
+       </div>
+       <div><label for="task-desc-input" class="block text-sm font-semibold text-gray-700 mb-2">Deskripsi</label> <textarea id="task-desc-input" class="input-modern w-full px-4 py-3 rounded-xl resize-none" rows="3" placeholder="Detail tugas..."></textarea>
+       </div>
+       <div class="flex gap-3"><button type="button" id="btn-cancel-add-task" class="flex-1 py-3 rounded-xl font-semibold border-2 border-gray-300 hover:border-gray-400 transition-colors"> Batal </button> <button type="submit" class="flex-1 btn-primary py-3 rounded-xl font-semibold text-white flex items-center justify-center gap-2"> <span id="add-task-text">Tambah Tugas</span>
+         <div id="add-task-spinner" class="loading-spinner hidden"></div></button>
+       </div>
+      </form>
+     </div>
+    </div>
+   </div>
+   <div id="modal-add-transaction" class="fixed inset-0 z-50 hidden">
+    <div class="modal-overlay absolute inset-0" id="overlay-add-transaction"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-4 sm:p-4 max-h-[90vh] overflow-y-auto">
+     <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 modal-content-mobile">
+      <h3 id="transaction-modal-title" class="text-2xl font-bold text-gray-800 mb-6">Tambah Transaksi</h3>
+      <form id="form-add-transaction" class="space-y-4"><input type="hidden" id="transaction-type-input" value="income">
+       <div><label for="transaction-amount-input" class="block text-sm font-semibold text-gray-700 mb-2">Jumlah (Rp)</label> <input type="number" id="transaction-amount-input" class="input-modern w-full px-4 py-3 rounded-xl" placeholder="50000" required min="1">
+       </div>
+       <div><label for="transaction-category-input" class="block text-sm font-semibold text-gray-700 mb-2">Kategori</label> <input type="text" id="transaction-category-input" class="input-modern w-full px-4 py-3 rounded-xl" placeholder="Contoh: Iuran Bulanan" required>
+       </div>
+       <div><label for="transaction-payer-input" class="block text-sm font-semibold text-gray-700 mb-2">Nama Pembayar (Opsional)</label> <input type="text" id="transaction-payer-input" class="input-modern w-full px-4 py-3 rounded-xl" placeholder="Nama anggota">
+       </div>
+       <div><label for="transaction-desc-input" class="block text-sm font-semibold text-gray-700 mb-2">Keterangan</label> <textarea id="transaction-desc-input" class="input-modern w-full px-4 py-3 rounded-xl resize-none" rows="2" placeholder="Catatan tambahan..."></textarea>
+       </div>
+       <div class="flex gap-3"><button type="button" id="btn-cancel-add-transaction" class="flex-1 py-3 rounded-xl font-semibold border-2 border-gray-300 hover:border-gray-400 transition-colors"> Batal </button> <button type="submit" class="flex-1 btn-primary py-3 rounded-xl font-semibold text-white flex items-center justify-center gap-2"> <span id="add-transaction-text">Simpan</span>
+         <div id="add-transaction-spinner" class="loading-spinner hidden"></div></button>
+       </div>
+      </form>
+     </div>
+    </div>
+   </div>
+   <div id="modal-invite-member" class="fixed inset-0 z-50 hidden">
+    <div class="modal-overlay absolute inset-0" id="overlay-invite-member"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-4 sm:p-4 max-h-[90vh] overflow-y-auto">
+     <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 modal-content-mobile">
+      <h3 class="text-2xl font-bold text-gray-800 mb-6">Undang Anggota</h3>
+      <form id="form-invite-member" class="space-y-4">
+       <div><label for="invite-username-input" class="block text-sm font-semibold text-gray-700 mb-2">Username/Email Anggota</label> <input type="text" id="invite-username-input" class="input-modern w-full px-4 py-3 rounded-xl" placeholder="Cari username atau email" required>
+       </div>
+       <div><label for="invite-role-input" class="block text-sm font-semibold text-gray-700 mb-2">Role</label> <select id="invite-role-input" class="input-modern w-full px-4 py-3 rounded-xl"> <option value="anggota">Anggota</option> <option value="wakil_ketua">Wakil Ketua</option> <option value="sekretaris">Sekretaris</option> <option value="bendahara">Bendahara</option> <option value="ketua">Ketua Kelas</option> </select>
+       </div>
+       <div class="bg-purple-50 p-4 rounded-xl">
+        <p class="text-sm text-purple-800 font-semibold mb-2">Akses Role:</p>
+        <ul class="text-xs text-purple-700 space-y-1">
+         <li>• <strong>Anggota:</strong> Melihat informasi &amp; keuangan</li>
+         <li>• <strong>Wakil Ketua:</strong> + Persetujuan untuk edit</li>
+         <li>• <strong>Sekretaris:</strong> + Mengelola tugas</li>
+         <li>• <strong>Bendahara:</strong> + Mengelola keuangan</li>
+         <li>• <strong>Ketua:</strong> Akses penuh + hapus anggota</li>
+         <li>• <strong>Admin:</strong> Akses penuh (pembuat kelas)</li>
+        </ul>
+       </div>
+       <div class="flex gap-3"><button type="button" id="btn-cancel-invite-member" class="flex-1 py-3 rounded-xl font-semibold border-2 border-gray-300 hover:border-gray-400 transition-colors"> Batal </button> <button type="submit" class="flex-1 btn-primary py-3 rounded-xl font-semibold text-white flex items-center justify-center gap-2"> <span id="invite-member-text">Undang</span>
+         <div id="invite-member-spinner" class="loading-spinner hidden"></div></button>
+       </div>
+      </form>
+     </div>
+    </div>
+   </div>
+   <div id="modal-class-settings" class="fixed inset-0 z-50 hidden">
+    <div class="modal-overlay absolute inset-0" id="overlay-class-settings"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-4 sm:p-4 max-h-[90vh] overflow-y-auto">
+     <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 modal-content-mobile">
+      <h3 class="text-2xl font-bold text-gray-800 mb-6">Pengaturan Kelas</h3>
+      <form id="form-class-settings" class="space-y-4">
+       <div><label for="settings-class-name" class="block text-sm font-semibold text-gray-700 mb-2">Nama Kelas</label> <input type="text" id="settings-class-name" class="input-modern w-full px-4 py-3 rounded-xl" required>
+       </div>
+       <div><label for="settings-class-desc" class="block text-sm font-semibold text-gray-700 mb-2">Deskripsi</label> <textarea id="settings-class-desc" class="input-modern w-full px-4 py-3 rounded-xl resize-none" rows="3"></textarea>
+       </div>
+       <div id="ketua-settings" class="hidden"><label for="settings-ketua" class="block text-sm font-semibold text-gray-700 mb-2">Ketua Kelas</label> <select id="settings-ketua" class="input-modern w-full px-4 py-3 rounded-xl"> <option value="">Tidak ada (Admin sebagai ketua)</option> </select>
+       </div>
+       <div class="flex gap-3"><button type="button" id="btn-delete-class" class="flex-1 py-3 rounded-xl font-semibold bg-red-500 hover:bg-red-600 text-white hidden"> Hapus Kelas </button> <button type="button" id="btn-cancel-settings" class="flex-1 py-3 rounded-xl font-semibold border-2 border-gray-300 hover:border-gray-400 transition-colors"> Batal </button> <button type="submit" class="flex-1 btn-primary py-3 rounded-xl font-semibold text-white flex items-center justify-center gap-2"> <span id="settings-text">Simpan</span>
+         <div id="settings-spinner" class="loading-spinner hidden"></div></button>
+       </div>
+      </form>
+     </div>
+    </div>
+   </div>
+   <div id="modal-recommend-member" class="fixed inset-0 z-50 hidden">
+    <div class="modal-overlay absolute inset-0" id="overlay-recommend-member"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-4 sm:p-4 max-h-[90vh] overflow-y-auto">
+     <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 modal-content-mobile">
+      <h3 class="text-2xl font-bold text-gray-800 mb-6">Rekomendasikan Anggota</h3>
+      <form id="form-recommend-member" class="space-y-4">
+       <div><label for="recommend-username-input" class="block text-sm font-semibold text-gray-700 mb-2">Username/Email</label> <input type="text" id="recommend-username-input" class="input-modern w-full px-4 py-3 rounded-xl" placeholder="Username atau email" required>
+       </div>
+       <p class="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">Rekomendasi akan dikirim ke Admin/Ketua Kelas untuk persetujuan.</p>
+       <div class="flex gap-3"><button type="button" id="btn-cancel-recommend" class="flex-1 py-3 rounded-xl font-semibold border-2 border-gray-300 hover:border-gray-400 transition-colors"> Batal </button> <button type="submit" class="flex-1 btn-primary py-3 rounded-xl font-semibold text-white flex items-center justify-center gap-2"> <span id="recommend-text">Kirim Rekomendasi</span>
+         <div id="recommend-spinner" class="loading-spinner hidden"></div></button>
+       </div>
+      </form>
+     </div>
+    </div>
+   </div>
+   <div id="modal-tasks-overview" class="fixed inset-0 z-50 hidden">
+    <div class="modal-overlay absolute inset-0" id="overlay-tasks-overview"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl p-4 max-h-[80vh]">
+     <div class="bg-white rounded-3xl shadow-2xl p-8 overflow-y-auto max-h-full">
+      <div class="flex items-center justify-between mb-6">
+       <h3 class="text-2xl font-bold text-gray-800">Ringkasan Tugas</h3><button id="btn-close-tasks" class="p-2 hover:bg-gray-100 rounded-lg">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg></button>
+      </div>
+      <div id="tasks-overview-list" class="space-y-3">
+       <p class="text-gray-500 text-center py-4">Tidak ada tugas</p>
+      </div>
+     </div>
+    </div>
+   </div>
+   <div id="modal-messages-overview" class="fixed inset-0 z-50 hidden">
+    <div class="modal-overlay absolute inset-0" id="overlay-messages-overview"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl p-4 max-h-[80vh]">
+     <div class="bg-white rounded-3xl shadow-2xl p-8 overflow-y-auto max-h-full">
+      <div class="flex items-center justify-between mb-6">
+       <h3 class="text-2xl font-bold text-gray-800">Ringkasan Pesan</h3><button id="btn-close-messages" class="p-2 hover:bg-gray-100 rounded-lg">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg></button>
+      </div>
+      <div id="messages-overview-list" class="space-y-3">
+       <p class="text-gray-500 text-center py-4">Tidak ada pesan</p>
+      </div>
+     </div>
+    </div>
+   </div>
+   <div id="modal-chart" class="fixed inset-0 z-50 hidden">
+    <div class="modal-overlay absolute inset-0" id="overlay-chart"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl p-4">
+     <div class="bg-white rounded-3xl shadow-2xl p-8 popup-animation">
+      <div class="flex items-center justify-between mb-6">
+       <h3 class="text-2xl font-bold text-gray-800">Grafik Keuangan</h3><button id="btn-close-chart" class="p-2 hover:bg-gray-100 rounded-lg">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg></button>
+      </div>
+      <div class="chart-container">
+       <canvas id="finance-chart"></canvas>
+      </div>
+     </div>
+    </div>
+   </div>
+   <div id="modal-edit-message" class="fixed inset-0 z-50 hidden">
+    <div class="modal-overlay absolute inset-0" id="overlay-edit-message"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-4">
+     <div class="bg-white rounded-3xl shadow-2xl p-6 popup-animation">
+      <h3 class="text-xl font-bold text-gray-800 mb-4">Edit Pesan</h3>
+      <form id="form-edit-message" class="space-y-4"><textarea id="edit-message-input" class="input-modern w-full px-4 py-3 rounded-xl resize-none" rows="4" required></textarea>
+       <div class="flex gap-3"><button type="button" id="btn-cancel-edit-message" class="flex-1 py-2 rounded-xl font-semibold border-2 border-gray-300 hover:border-gray-400 transition-colors"> Batal </button> <button type="submit" class="flex-1 btn-primary py-2 rounded-xl font-semibold text-white"> Simpan </button>
+       </div>
+      </form>
+     </div>
+    </div>
+   </div>
+   <div id="modal-reactions" class="fixed inset-0 z-50 hidden">
+    <div class="modal-overlay absolute inset-0" id="overlay-reactions"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm p-4">
+     <div class="bg-white rounded-3xl shadow-2xl p-6 popup-animation">
+      <h3 class="text-lg font-bold text-gray-800 mb-4">Pilih Reaksi</h3>
+      <div class="grid grid-cols-5 gap-3"><button onclick="addReaction('❤️')" class="text-3xl hover:scale-125 transition-transform p-2 hover:bg-gray-100 rounded-lg">❤️</button> <button onclick="addReaction('👍')" class="text-3xl hover:scale-125 transition-transform p-2 hover:bg-gray-100 rounded-lg">👍</button> <button onclick="addReaction('😂')" class="text-3xl hover:scale-125 transition-transform p-2 hover:bg-gray-100 rounded-lg">😂</button> <button onclick="addReaction('😮')" class="text-3xl hover:scale-125 transition-transform p-2 hover:bg-gray-100 rounded-lg">😮</button> <button onclick="addReaction('😢')" class="text-3xl hover:scale-125 transition-transform p-2 hover:bg-gray-100 rounded-lg">😢</button> <button onclick="addReaction('🔥')" class="text-3xl hover:scale-125 transition-transform p-2 hover:bg-gray-100 rounded-lg">🔥</button> <button onclick="addReaction('🎉')" class="text-3xl hover:scale-125 transition-transform p-2 hover:bg-gray-100 rounded-lg">🎉</button> <button onclick="addReaction('👏')" class="text-3xl hover:scale-125 transition-transform p-2 hover:bg-gray-100 rounded-lg">👏</button> <button onclick="addReaction('🙏')" class="text-3xl hover:scale-125 transition-transform p-2 hover:bg-gray-100 rounded-lg">🙏</button> <button onclick="addReaction('💯')" class="text-3xl hover:scale-125 transition-transform p-2 hover:bg-gray-100 rounded-lg">💯</button>
+      </div>
+     </div>
+    </div>
+   </div>
+   <div id="modal-notifications" class="fixed inset-0 z-50 hidden">
+    <div class="modal-overlay absolute inset-0" id="overlay-notifications"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl p-4 max-h-[80vh]">
+     <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
+      <div class="p-6 border-b flex items-center justify-between">
+       <h3 class="text-2xl font-bold text-gray-800">Notifikasi</h3><button id="btn-close-notif" class="p-2 hover:bg-gray-100 rounded-lg">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg></button>
+      </div>
+      <div class="p-4 border-b flex gap-2"><button id="filter-unread" class="px-3 py-1 text-sm rounded-lg bg-purple-500 text-white">Belum Dibaca</button> <button id="filter-read" class="px-3 py-1 text-sm rounded-lg text-gray-600 hover:bg-gray-100">Sudah Dibaca</button> <button id="filter-all" class="px-3 py-1 text-sm rounded-lg text-gray-600 hover:bg-gray-100">Semua</button>
+      </div>
+      <div id="notifications-list" class="p-4 space-y-2 max-h-96 overflow-y-auto scrollbar-custom">
+       <div class="text-center py-8 text-gray-400">
+        <p>Tidak ada notifikasi</p>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+   <div id="toast-container" class="fixed top-4 right-4 z-[60] space-y-2"></div>
+  </div>
+  <script>
+    let allData = [];
+    let currentUser = null;
+    let currentClass = null;
+    let currentPage = 'login';
+    let isDarkMode = false;
+    let currentNotifFilter = 'unread';
+    let financeChart = null;
+    let deleteConfirmStates = {};
+    let currentEditingMessage = null;
+    let currentReactionMessage = null;
+    let replyToMessage = null;
+
+    const defaultConfig = {
+      app_title: 'Sistem Manajemen Kelas',
+      welcome_message: 'Selamat datang di sistem manajemen kelas',
+      primary_color: '#667eea',
+      background_color: '#f8f9fa'
+    };
+
+    function generateId() {
+      return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    }
+
+    function getAvatarColor(name) {
+      const colors = ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#43e97b', '#fa709a'];
+      const index = name.charCodeAt(0) % colors.length;
+      return colors[index];
+    }
+
+    function formatCurrency(amount) {
+      return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0
+      }).format(amount);
+    }
+
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      return new Intl.DateTimeFormat('id-ID', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+      }).format(date);
+    }
+
+    function formatDateTime(dateString) {
+      const date = new Date(dateString);
+      return new Intl.DateTimeFormat('id-ID', {
+        day: 'numeric',
+        month: 'short',
+        hour: '2-digit',
+        minute: '2-digit'
+      }).format(date);
+    }
+
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500';
+      toast.className = `${bgColor} text-white px-6 py-4 rounded-2xl shadow-xl flex items-center gap-3 max-w-sm fade-in`;
+      
+      const icon = type === 'success' 
+        ? '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>'
+        : type === 'error'
+        ? '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>'
+        : '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+      
+      toast.innerHTML = `${icon}<span class="font-semibold">${message}</span>`;
+      container.appendChild(toast);
+      
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    function getRandomGreeting() {
+      const greetings = [
+        'Selamat Datang!',
+        'Halo!',
+        'Hai!',
+        'Selamat Pagi!',
+        'Selamat Siang!',
+        'Selamat Sore!',
+        'Selamat Malam!',
+        'Apa Kabar?',
+        'Senang Bertemu Lagi!',
+        'Semangat Hari Ini!'
+      ];
+      return greetings[Math.floor(Math.random() * greetings.length)];
+    }
+
+    function toggleDarkMode() {
+      isDarkMode = !isDarkMode;
+      document.body.classList.toggle('dark-mode', isDarkMode);
+      document.getElementById('icon-light').classList.toggle('hidden', isDarkMode);
+      document.getElementById('icon-dark').classList.toggle('hidden', !isDarkMode);
+
+      if (currentUser) {
+        const userData = allData.find(d => d.data_type === 'user' && d.user_id === currentUser.user_id);
+        if (userData) {
+          window.dataSdk.update({...userData, dark_mode: isDarkMode});
+        }
+      }
+    }
+
+    function getUsers() {
+      return allData.filter(d => d.data_type === 'user');
+    }
+
+    function getClasses() {
+      return allData.filter(d => d.data_type === 'class');
+    }
+
+    function getClassMembers(classId) {
+      return allData.filter(d => d.data_type === 'member' && d.class_id === classId);
+    }
+
+    function getClassTransactions(classId, month = 'all') {
+      let transactions = allData.filter(d => d.data_type === 'transaction' && d.transaction_class_id === classId);
+      if (month !== 'all') {
+        transactions = transactions.filter(t => t.transaction_month === month);
+      }
+      return transactions;
+    }
+
+    function getClassTasks(classId) {
+      return allData.filter(d => d.data_type === 'task' && d.task_class_id === classId);
+    }
+
+    function getClassMessages(classId) {
+      return allData.filter(d => d.data_type === 'message' && d.message_class_id === classId);
+    }
+
+    function getUserNotifications(userId) {
+      return allData.filter(d => d.data_type === 'notification' && d.notif_target_id === userId);
+    }
+
+    function getUserRole(userId, classId) {
+      const cls = getClasses().find(c => c.class_id === classId);
+      if (cls && cls.admin_id === userId) return 'admin';
+      if (cls && cls.ketua_id === userId) return 'ketua';
+      
+      const member = getClassMembers(classId).find(m => m.member_user_id === userId);
+      return member ? member.member_role : null;
+    }
+
+    function canEdit(userId, classId, type) {
+      const role = getUserRole(userId, classId);
+      
+      if (role === 'admin' || role === 'ketua') return true;
+      if (type === 'task' && (role === 'sekretaris' || role === 'wakil_ketua')) return true;
+      if (type === 'finance' && (role === 'bendahara' || role === 'wakil_ketua')) return true;
+      if (type === 'member' && role === 'admin') return true;
+      
+      return false;
+    }
+
+    function showPage(page) {
+      document.getElementById('page-login').classList.add('hidden');
+      document.getElementById('page-home').classList.add('hidden');
+      document.getElementById('page-class').classList.add('hidden');
+      
+      document.getElementById(`page-${page}`).classList.remove('hidden');
+      currentPage = page;
+    }
+
+    function navigateToHome() {
+      showPage('home');
+      updateHomeUI();
+    }
+
+    function navigateToClass(classId, targetTab = 'info') {
+      const cls = getClasses().find(c => c.class_id === classId);
+      if (!cls) return;
+      
+      currentClass = cls;
+      showPage('class');
+      updateClassUI();
+      
+      if (targetTab) {
+        document.getElementById(`tab-${targetTab}`).click();
+      }
+    }
+
+    function updateCurrentDate() {
+      const date = new Date();
+      const formatted = new Intl.DateTimeFormat('id-ID', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      }).format(date);
+      
+      const dateEl = document.getElementById('current-date');
+      if (dateEl) dateEl.textContent = formatted;
+    }
+
+    function updateHomeUI() {
+      if (!currentUser) return;
+
+      document.getElementById('greeting-text').textContent = getRandomGreeting();
+
+      const avatar = currentUser.full_name.charAt(0).toUpperCase();
+      document.getElementById('user-avatar-header').textContent = avatar;
+      document.getElementById('user-avatar-header').style.background = currentUser.avatar_color;
+      document.getElementById('user-name-header').textContent = currentUser.full_name;
+      document.getElementById('welcome-user').textContent = `Halo, ${currentUser.full_name}! 👋`;
+
+      const userClasses = getClasses().filter(c => {
+        return c.admin_id === currentUser.user_id || 
+               c.ketua_id === currentUser.user_id ||
+               getClassMembers(c.class_id).some(m => m.member_user_id === currentUser.user_id);
+      });
+      
+      let totalTasks = 0;
+      let totalMessages = 0;
+      userClasses.forEach(cls => {
+        totalTasks += getClassTasks(cls.class_id).length;
+        totalMessages += getClassMessages(cls.class_id).length;
+      });
+
+      document.getElementById('total-classes').textContent = userClasses.length;
+      document.getElementById('total-tasks').textContent = totalTasks;
+      document.getElementById('new-messages').textContent = totalMessages;
+
+      renderClassesList(userClasses);
+      updateNotificationBadge();
+      updateCurrentDate();
+      populateMonthFilter();
+    }
+
+    function renderClassesList(classes) {
+      const container = document.getElementById('classes-list');
+      
+      if (classes.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full text-center py-12 bg-white rounded-2xl">
+            <svg class="w-20 h-20 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+            </svg>
+            <p class="text-gray-500 font-semibold mb-2">Belum Ada Kelas</p>
+            <p class="text-gray-400 text-sm">Buat kelas pertama Anda untuk memulai</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = classes.map(cls => {
+        const memberCount = getClassMembers(cls.class_id).length + 1;
+        const role = getUserRole(currentUser.user_id, cls.class_id);
+        
+        return `
+          <div class="bg-white rounded-2xl p-6 shadow-sm card-hover cursor-pointer" onclick="navigateToClass('${cls.class_id}')">
+            <div class="flex items-start justify-between mb-4">
+              <div class="w-12 h-12 gradient-primary rounded-xl flex items-center justify-center text-white text-xl font-bold">
+                ${cls.class_name.charAt(0)}
+              </div>
+              <span class="badge-${role} text-white text-xs px-3 py-1 rounded-full font-semibold">
+                ${role === 'wakil_ketua' ? 'Wakil Ketua' : role.charAt(0).toUpperCase() + role.slice(1)}
+              </span>
+            </div>
+            <h4 class="font-bold text-gray-800 text-lg mb-1">${cls.class_name}</h4>
+            <p class="text-sm text-gray-500 mb-3">${cls.class_description || 'Tidak ada deskripsi'}</p>
+            <div class="flex items-center gap-4 text-sm text-gray-600">
+              <div class="flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                </svg>
+                <span>${memberCount} anggota</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function updateClassUI() {
+      if (!currentClass || !currentUser) return;
+
+      const role = getUserRole(currentUser.user_id, currentClass.class_id);
+      
+      document.getElementById('class-name').textContent = currentClass.class_name;
+      document.getElementById('class-role-badge').textContent = `Role: ${role === 'wakil_ketua' ? 'Wakil Ketua' : role.charAt(0).toUpperCase() + role.slice(1)}`;
+
+      const isAdmin = role === 'admin';
+      const isKetua = role === 'ketua';
+      const canManage = isAdmin || isKetua;
+      const isBendahara = role === 'bendahara' || canManage;
+      const isSekretaris = role === 'sekretaris' || canManage;
+      const isWakilKetua = role === 'wakil_ketua';
+
+      document.getElementById('btn-add-task').classList.toggle('hidden', !isSekretaris && !isWakilKetua);
+      document.getElementById('btn-add-income').classList.toggle('hidden', !isBendahara && !isWakilKetua);
+      document.getElementById('btn-add-expense').classList.toggle('hidden', !isBendahara && !isWakilKetua);
+      document.getElementById('btn-invite-member').classList.toggle('hidden', !canManage);
+      document.getElementById('btn-class-settings').classList.toggle('hidden', !canManage);
+      document.getElementById('btn-recommend-member').classList.toggle('hidden', canManage);
+
+      renderTasks();
+      renderFinance();
+      renderClassMembers();
+      renderChat();
+    }
+
+    function renderTasks() {
+      const tasks = getClassTasks(currentClass.class_id);
+      const container = document.getElementById('tasks-list');
+
+      if (tasks.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-12 bg-white rounded-2xl">
+            <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            <p class="text-gray-500">Belum ada tugas atau informasi</p>
+          </div>
+        `;
+        return;
+      }
+
+      const now = new Date();
+      const sorted = [...tasks]
+        .filter(task => !task.task_completed)
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      
+      container.innerHTML = sorted.map(task => {
+        const deadline = task.task_deadline ? new Date(task.task_deadline) : null;
+        const isOverdue = deadline && deadline < now;
+        const role = getUserRole(currentUser.user_id, currentClass.class_id);
+        const canDelete = role === 'admin' || role === 'ketua' || role === 'sekretaris';
+        const deleteKey = `task_${task.__backendId}`;
+        const isConfirmingDelete = deleteConfirmStates[deleteKey];
+        
+        return `
+          <div class="bg-white rounded-2xl p-6 shadow-sm ${isOverdue ? 'border-l-4 border-red-500' : ''}">
+            <div class="flex items-start justify-between mb-3">
+              <div class="flex-1">
+                <h4 class="font-bold text-gray-800 text-lg mb-1">${task.task_title}</h4>
+                ${task.task_subject ? `<span class="inline-block bg-purple-100 text-purple-700 text-xs px-3 py-1 rounded-full font-semibold">${task.task_subject}</span>` : ''}
+              </div>
+              <div class="flex items-center gap-2">
+                ${deadline ? `
+                  <div class="text-right">
+                    <p class="text-xs text-gray-500 mb-1">Deadline</p>
+                    <p class="text-sm font-semibold ${isOverdue ? 'text-red-600' : 'text-gray-700'}">${formatDate(task.task_deadline)}</p>
+                  </div>
+                ` : ''}
+                ${canDelete ? `
+                  <button onclick="handleMarkTaskComplete('${task.__backendId}')" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg text-xs font-semibold transition-colors">
+                    ✓ Selesai
+                  </button>
+                  <button onclick="handleDeleteTask('${task.__backendId}')" class="${isConfirmingDelete ? 'delete-confirm-btn' : 'bg-red-500 hover:bg-red-600'} text-white px-3 py-1 rounded-lg text-xs font-semibold transition-colors">
+                    ${isConfirmingDelete ? 'Konfirmasi?' : 'Hapus'}
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+            <p class="text-gray-600 text-sm mb-3">${task.task_description || 'Tidak ada deskripsi'}</p>
+            <p class="text-xs text-gray-500">Dibuat oleh <span class="font-semibold">${task.task_created_by}</span> • ${formatDate(task.created_at)}</p>
+            ${isOverdue ? '<p class="text-xs text-red-600 font-semibold mt-2">⚠️ Tenggat waktu telah lewat</p>' : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function populateMonthFilter() {
+      const select = document.getElementById('month-filter');
+      const months = new Set();
+      
+      getClasses().forEach(cls => {
+        const transactions = getClassTransactions(cls.class_id);
+        transactions.forEach(t => {
+          if (t.transaction_month) months.add(t.transaction_month);
+        });
+      });
+
+      const sortedMonths = Array.from(months).sort().reverse();
+      
+      select.innerHTML = '<option value="all">Semua Bulan</option>' +
+        sortedMonths.map(m => `<option value="${m}">${m}</option>`).join('');
+    }
+
+    function renderFinance() {
+      const selectedMonth = document.getElementById('month-filter').value;
+      const transactions = getClassTransactions(currentClass.class_id, selectedMonth);
+      const container = document.getElementById('finance-list');
+
+      const income = transactions.filter(t => t.transaction_type === 'income' && !t.is_archived && !t.is_history).reduce((sum, t) => sum + t.amount, 0);
+      const expense = transactions.filter(t => t.transaction_type === 'expense' && !t.is_archived && !t.is_history).reduce((sum, t) => sum + t.amount, 0);
+      const balance = income - expense;
+
+      document.getElementById('class-balance').textContent = formatCurrency(balance);
+      document.getElementById('class-income').textContent = formatCurrency(income);
+      document.getElementById('class-expense').textContent = formatCurrency(expense);
+
+      document.getElementById('btn-archive-month').classList.toggle('hidden', selectedMonth === 'all');
+
+      const role = getUserRole(currentUser.user_id, currentClass.class_id);
+      const canReset = role === 'admin' || role === 'ketua' || role === 'bendahara';
+      document.getElementById('btn-reset-finance').classList.toggle('hidden', !canReset);
+
+      const activeTransactions = transactions.filter(t => !t.is_archived && !t.is_history);
+
+      if (activeTransactions.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-12 bg-white rounded-2xl">
+            <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <p class="text-gray-500">Belum ada transaksi keuangan</p>
+          </div>
+        `;
+        return;
+      }
+
+      const sorted = [...activeTransactions].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      const canDelete = role === 'admin' || role === 'ketua' || role === 'bendahara';
+      
+      container.innerHTML = sorted.map(t => {
+        const deleteKey = `transaction_${t.__backendId}`;
+        const isConfirmingDelete = deleteConfirmStates[deleteKey];
+        
+        return `
+        <div class="bg-white rounded-xl p-4 shadow-sm flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl ${t.transaction_type === 'income' ? 'bg-green-100' : 'bg-red-100'} flex items-center justify-center">
+            <svg class="w-6 h-6 ${t.transaction_type === 'income' ? 'text-green-600' : 'text-red-600'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${t.transaction_type === 'income' ? 'M7 11l5-5m0 0l5 5m-5-5v12' : 'M17 13l-5 5m0 0l-5-5m5 5V6'}"/>
+            </svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="font-semibold text-gray-800">${t.category}</p>
+            <p class="text-sm text-gray-600">${t.description || 'Tidak ada keterangan'}</p>
+            ${t.payer_name ? `<p class="text-xs text-gray-500">Pembayar: ${t.payer_name}</p>` : ''}
+            <p class="text-xs text-gray-500">${formatDateTime(t.created_at)}</p>
+          </div>
+          <div class="text-right flex items-center gap-2">
+            <p class="font-bold ${t.transaction_type === 'income' ? 'text-green-600' : 'text-red-600'}">
+              ${t.transaction_type === 'income' ? '+' : '-'}${formatCurrency(t.amount)}
+            </p>
+            ${canDelete ? `
+              <button onclick="handleDeleteTransaction('${t.__backendId}')" class="${isConfirmingDelete ? 'delete-confirm-btn' : 'bg-red-500 hover:bg-red-600'} text-white px-3 py-1 rounded-lg text-xs font-semibold transition-colors">
+                ${isConfirmingDelete ? 'Konfirmasi?' : 'Hapus'}
+              </button>
+            ` : ''}
+          </div>
+        </div>
+      `;
+      }).join('');
+    }
+
+    function renderFinanceHistory() {
+      const allTransactions = getClassTransactions(currentClass.class_id);
+      const historyTransactions = allTransactions.filter(t => t.is_history);
+      
+      const groupedByMonth = {};
+      historyTransactions.forEach(t => {
+        if (!groupedByMonth[t.transaction_month]) {
+          groupedByMonth[t.transaction_month] = [];
+        }
+        groupedByMonth[t.transaction_month].push(t);
+      });
+
+      const container = document.getElementById('finance-history-list');
+      const months = Object.keys(groupedByMonth).sort().reverse();
+
+      if (months.length === 0) {
+        container.innerHTML = '<div class="text-center py-8 text-gray-400"><p>Belum ada riwayat keuangan</p></div>';
+        return;
+      }
+
+      const role = getUserRole(currentUser.user_id, currentClass.class_id);
+      const canDelete = role === 'admin' || role === 'ketua';
+
+      container.innerHTML = months.map(month => {
+        const transactions = groupedByMonth[month];
+        const income = transactions.filter(t => t.transaction_type === 'income').reduce((sum, t) => sum + t.amount, 0);
+        const expense = transactions.filter(t => t.transaction_type === 'expense').reduce((sum, t) => sum + t.amount, 0);
+        const balance = income - expense;
+
+        return `
+          <div class="bg-white rounded-2xl p-4 shadow-sm">
+            <div class="flex items-center justify-between mb-3">
+              <h4 class="font-bold text-lg text-gray-800">📅 ${month}</h4>
+              ${canDelete ? `
+                <button onclick="deleteHistoryMonth('${month}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg text-xs font-semibold">
+                  Hapus Riwayat
+                </button>
+              ` : ''}
+            </div>
+            <div class="grid grid-cols-3 gap-3 mb-3">
+              <div class="text-center bg-gray-50 p-2 rounded-lg">
+                <p class="text-xs text-gray-500">Saldo</p>
+                <p class="font-bold text-purple-600 text-sm">${formatCurrency(balance)}</p>
+              </div>
+              <div class="text-center bg-green-50 p-2 rounded-lg">
+                <p class="text-xs text-gray-500">Pemasukan</p>
+                <p class="font-bold text-green-600 text-sm">${formatCurrency(income)}</p>
+              </div>
+              <div class="text-center bg-red-50 p-2 rounded-lg">
+                <p class="text-xs text-gray-500">Pengeluaran</p>
+                <p class="font-bold text-red-600 text-sm">${formatCurrency(expense)}</p>
+              </div>
+            </div>
+            <details class="cursor-pointer">
+              <summary class="text-sm text-purple-600 hover:text-purple-700 font-semibold">Lihat Detail Transaksi (${transactions.length})</summary>
+              <div class="mt-3 space-y-2">
+                ${transactions.map(t => `
+                  <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg text-sm">
+                    <div class="flex-1">
+                      <p class="font-semibold text-gray-700">${t.category}</p>
+                      <p class="text-xs text-gray-500">${formatDateTime(t.created_at)}</p>
+                    </div>
+                    <p class="font-bold ${t.transaction_type === 'income' ? 'text-green-600' : 'text-red-600'}">
+                      ${t.transaction_type === 'income' ? '+' : '-'}${formatCurrency(t.amount)}
+                    </p>
+                  </div>
+                `).join('')}
+              </div>
+            </details>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderClassMembers() {
+      const members = getClassMembers(currentClass.class_id);
+      const admin = getUsers().find(u => u.user_id === currentClass.admin_id);
+      const container = document.getElementById('members-list-class');
+
+      const allMembers = [
+        { ...admin, member_role: 'admin', isAdmin: true },
+        ...members.map(m => {
+          const user = getUsers().find(u => u.user_id === m.member_user_id);
+          return { ...user, ...m, isAdmin: false };
+        })
+      ];
+
+      const role = getUserRole(currentUser.user_id, currentClass.class_id);
+      const canRemove = role === 'admin' || role === 'ketua';
+
+      container.innerHTML = allMembers.map(member => {
+        const deleteKey = `member_${member.user_id}`;
+        const isConfirmingDelete = deleteConfirmStates[deleteKey];
+        
+        return `
+        <div class="bg-white rounded-xl p-4 flex items-center gap-4 shadow-sm">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center text-white text-lg font-bold" style="background: ${member.avatar_color}">
+            ${member.full_name.charAt(0).toUpperCase()}
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="font-semibold text-gray-800">${member.full_name}</p>
+            <p class="text-sm text-gray-600">@${member.username}</p>
+            ${member.email ? `<p class="text-xs text-gray-500">${member.email}</p>` : ''}
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="badge-${member.member_role} text-white text-xs px-3 py-1 rounded-full font-semibold whitespace-nowrap">
+              ${member.member_role === 'wakil_ketua' ? 'Wakil Ketua' : member.member_role.charAt(0).toUpperCase() + member.member_role.slice(1)}
+            </span>
+            ${canRemove && !member.isAdmin && member.user_id !== currentUser.user_id ? `
+              <button onclick="handleDeleteMember('${member.user_id}')" class="${isConfirmingDelete ? 'delete-confirm-btn' : 'bg-red-500 hover:bg-red-600'} text-white p-2 rounded-lg transition-colors">
+                ${isConfirmingDelete ? '<span class="text-xs">Konfirmasi?</span>' : '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>'}
+              </button>
+            ` : ''}
+          </div>
+        </div>
+      `;
+      }).join('');
+    }
+
+    function renderChat() {
+      const messages = getClassMessages(currentClass.class_id);
+      const container = document.getElementById('chat-messages');
+
+      if (messages.length === 0) {
+        container.innerHTML = `
+          <div class="text-center text-gray-400 py-8">
+            <p>Belum ada pesan. Mulai percakapan!</p>
+          </div>
+        `;
+        return;
+      }
+
+      const sorted = [...messages].sort((a, b) => new Date(a.message_timestamp) - new Date(b.message_timestamp));
+      
+      container.innerHTML = sorted.map(msg => {
+        const isSent = msg.message_sender_id === currentUser.user_id;
+        const isDeleted = msg.message_deleted;
+        const reactions = msg.message_reactions ? JSON.parse(msg.message_reactions) : {};
+        const reactionEntries = Object.entries(reactions);
+        
+        let replyContent = '';
+        if (msg.message_reply_to) {
+          const replyMsg = messages.find(m => m.__backendId === msg.message_reply_to);
+          if (replyMsg) {
+            replyContent = `
+              <div class="bg-purple-50 border-l-2 border-purple-500 p-2 mb-2 rounded text-xs">
+                <p class="font-semibold text-purple-700">${replyMsg.message_sender_name}</p>
+                <p class="text-gray-600">${replyMsg.message_deleted ? '🚫 Pesan telah dihapus' : replyMsg.message_content.substring(0, 50)}${replyMsg.message_content.length > 50 ? '...' : ''}</p>
+              </div>
+            `;
+          }
+        }
+        
+        return `
+          <div class="flex ${isSent ? 'justify-end' : 'justify-start'} gap-2 group">
+            ${!isSent ? `<div class="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style="background: ${getAvatarColor(msg.message_sender_name)}">${msg.message_sender_name.charAt(0).toUpperCase()}</div>` : ''}
+            <div class="max-w-[70%]">
+              ${!isSent ? `<p class="text-xs text-gray-500 mb-1">${msg.message_sender_name}</p>` : ''}
+              <div class="relative">
+                <div class="${isSent ? 'chat-bubble-sent text-white' : 'chat-bubble-received text-gray-800 border border-gray-200'} px-4 py-2">
+                  ${replyContent}
+                  <p class="text-sm ${isDeleted ? 'italic text-gray-400' : ''}">${isDeleted ? '🚫 Pesan telah dihapus' : msg.message_content}</p>
+                  ${msg.message_edited && !isDeleted ? '<p class="text-xs opacity-70 mt-1">✏️ diedit</p>' : ''}
+                </div>
+                ${!isDeleted ? `
+                  <div class="absolute ${isSent ? 'left-0 -translate-x-full' : 'right-0 translate-x-full'} top-0 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 px-2">
+                    ${!isSent ? `<button onclick="openReactionModal('${msg.__backendId}')" class="p-1 bg-white rounded-lg shadow hover:bg-gray-100 text-lg">😊</button>` : ''}
+                    <button onclick="setReplyTo('${msg.__backendId}', '${msg.message_sender_name}')" class="p-1 bg-white rounded-lg shadow hover:bg-gray-100">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
+                      </svg>
+                    </button>
+                    ${isSent ? `
+                      <button onclick="openEditMessage('${msg.__backendId}')" class="p-1 bg-white rounded-lg shadow hover:bg-gray-100">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                        </svg>
+                      </button>
+                      <button onclick="deleteMessage('${msg.__backendId}')" class="p-1 bg-white rounded-lg shadow hover:bg-red-100">
+                        <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                      </button>
+                    ` : ''}
+                  </div>
+                ` : ''}
+                ${reactionEntries.length > 0 ? `
+                  <div class="flex gap-1 mt-1 flex-wrap">
+                    ${reactionEntries.map(([emoji, users]) => `
+                      <button onclick="toggleReaction('${msg.__backendId}', '${emoji}')" class="bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded-full text-xs flex items-center gap-1">
+                        <span>${emoji}</span>
+                        <span class="font-semibold">${users.length}</span>
+                      </button>
+                    `).join('')}
+                  </div>
+                ` : ''}
+              </div>
+              <p class="text-xs text-gray-400 mt-1 ${isSent ? 'text-right' : ''}">${formatDateTime(msg.message_timestamp)}</p>
+            </div>
+            ${isSent ? `<div class="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style="background: ${currentUser.avatar_color}">${currentUser.full_name.charAt(0).toUpperCase()}</div>` : ''}
+          </div>
+        `;
+      }).join('');
+
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function updateNotificationBadge() {
+      const notifs = getUserNotifications(currentUser.user_id).filter(n => n.notif_status === 'unread');
+      const badge = document.getElementById('notif-badge');
+      
+      if (notifs.length > 0) {
+        badge.textContent = notifs.length;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
+
+    function renderNotifications() {
+      const allNotifs = getUserNotifications(currentUser.user_id);
+      let filtered = allNotifs;
+
+      if (currentNotifFilter === 'unread') {
+        filtered = allNotifs.filter(n => n.notif_status === 'unread');
+      } else if (currentNotifFilter === 'read') {
+        filtered = allNotifs.filter(n => n.notif_status === 'read');
+      }
+
+      const container = document.getElementById('notifications-list');
+      const sorted = [...filtered].sort((a, b) => new Date(b.notif_timestamp) - new Date(a.notif_timestamp));
+
+      if (sorted.length === 0) {
+        container.innerHTML = '<div class="text-center py-8 text-gray-400"><p>Tidak ada notifikasi</p></div>';
+        return;
+      }
+
+      container.innerHTML = sorted.map(notif => {
+        const isUnread = notif.notif_status === 'unread';
+        let content = '';
+        let actionButtons = '';
+
+        if (notif.notif_type === 'invite') {
+          content = `<strong>${notif.notif_from_name}</strong> mengundang Anda ke kelas <strong>${notif.notif_class_name}</strong>`;
+          actionButtons = `
+            <div class="flex gap-2 mt-2">
+              <button onclick="respondToInvite('${notif.__backendId}', 'accept')" class="flex-1 py-2 rounded-lg bg-green-500 text-white text-sm font-semibold hover:bg-green-600">
+                Terima
+              </button>
+              <button onclick="respondToInvite('${notif.__backendId}', 'reject')" class="flex-1 py-2 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600">
+                Tolak
+              </button>
+            </div>
+          `;
+        } else if (notif.notif_type === 'recommendation') {
+          content = `<strong>${notif.notif_from_name}</strong> merekomendasikan anggota untuk kelas <strong>${notif.notif_class_name}</strong>`;
+          const data = JSON.parse(notif.notif_data);
+          actionButtons = `
+            <p class="text-sm text-gray-600 mt-1">User: <strong>${data.username}</strong></p>
+            <div class="flex gap-2 mt-2">
+              <button onclick="respondToRecommendation('${notif.__backendId}', 'accept')" class="flex-1 py-2 rounded-lg bg-green-500 text-white text-sm font-semibold hover:bg-green-600">
+                Setuju
+              </button>
+              <button onclick="respondToRecommendation('${notif.__backendId}', 'reject')" class="flex-1 py-2 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600">
+                Tolak
+              </button>
+            </div>
+          `;
+        } else if (notif.notif_type === 'message') {
+          content = `<strong>${notif.notif_from_name}</strong> mengirim pesan di <strong>${notif.notif_class_name}</strong>`;
+          actionButtons = `<button onclick="openClassFromNotif('${notif.notif_class_id}', 'chat')" class="mt-2 w-full py-2 rounded-lg bg-purple-500 text-white text-sm font-semibold hover:bg-purple-600">Lihat Pesan</button>`;
+        }
+
+        return `
+          <div class="${isUnread ? 'notif-unread' : 'notif-read'} p-4 rounded-xl">
+            <p class="text-sm text-gray-700">${content}</p>
+            <p class="text-xs text-gray-500 mt-1">${formatDateTime(notif.notif_timestamp)}</p>
+            ${actionButtons}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openModal(modalId) {
+      document.getElementById(modalId).classList.remove('hidden');
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.add('hidden');
+    }
+
+    window.navigateToClass = navigateToClass;
+
+    window.handleMarkTaskComplete = async function(taskId) {
+      const task = allData.find(d => d.__backendId === taskId);
+      if (task) {
+        const result = await window.dataSdk.update({...task, task_completed: true});
+        if (result.isOk) {
+          showToast('Tugas ditandai selesai', 'success');
+        }
+      }
+    };
+
+    window.handleDeleteTask = async function(taskId) {
+      const deleteKey = `task_${taskId}`;
+      
+      if (deleteConfirmStates[deleteKey]) {
+        const task = allData.find(d => d.__backendId === taskId);
+        if (task) {
+          const result = await window.dataSdk.delete(task);
+          if (result.isOk) {
+            showToast('Tugas berhasil dihapus', 'success');
+            delete deleteConfirmStates[deleteKey];
+          } else {
+            showToast('Gagal menghapus tugas', 'error');
+          }
+        }
+      } else {
+        deleteConfirmStates[deleteKey] = true;
+        renderTasks();
+        setTimeout(() => {
+          delete deleteConfirmStates[deleteKey];
+          renderTasks();
+        }, 3000);
+      }
+    };
+
+    window.handleDeleteTransaction = async function(transactionId) {
+      const deleteKey = `transaction_${transactionId}`;
+      
+      if (deleteConfirmStates[deleteKey]) {
+        const transaction = allData.find(d => d.__backendId === transactionId);
+        if (transaction) {
+          const result = await window.dataSdk.delete(transaction);
+          if (result.isOk) {
+            showToast('Transaksi berhasil dihapus', 'success');
+            delete deleteConfirmStates[deleteKey];
+          } else {
+            showToast('Gagal menghapus transaksi', 'error');
+          }
+        }
+      } else {
+        deleteConfirmStates[deleteKey] = true;
+        renderFinance();
+        setTimeout(() => {
+          delete deleteConfirmStates[deleteKey];
+          renderFinance();
+        }, 3000);
+      }
+    };
+
+    window.handleDeleteMember = async function(userId) {
+      const deleteKey = `member_${userId}`;
+      
+      if (deleteConfirmStates[deleteKey]) {
+        const member = allData.find(d => 
+          d.data_type === 'member' && 
+          d.class_id === currentClass.class_id && 
+          d.member_user_id === userId
+        );
+        
+        if (member) {
+          const result = await window.dataSdk.delete(member);
+          if (result.isOk) {
+            showToast('Anggota berhasil dikeluarkan', 'success');
+            delete deleteConfirmStates[deleteKey];
+          } else {
+            showToast('Gagal mengeluarkan anggota', 'error');
+          }
+        }
+      } else {
+        deleteConfirmStates[deleteKey] = true;
+        renderClassMembers();
+        setTimeout(() => {
+          delete deleteConfirmStates[deleteKey];
+          renderClassMembers();
+        }, 3000);
+      }
+    };
+
+    window.respondToInvite = async function(notifId, action) {
+      const notif = allData.find(d => d.__backendId === notifId);
+      if (!notif) return;
+
+      if (action === 'accept') {
+        if (allData.length >= 999) {
+          showToast('Batas maksimum data tercapai', 'error');
+          return;
+        }
+
+        const data = JSON.parse(notif.notif_data);
+        const result = await window.dataSdk.create({
+          data_type: 'member',
+          class_id: notif.notif_class_id,
+          member_user_id: currentUser.user_id,
+          member_role: data.role,
+          joined_at: new Date().toISOString(),
+          created_at: new Date().toISOString()
+        });
+
+        if (result.isOk) {
+          showToast('Anda telah bergabung ke kelas!', 'success');
+        }
+      }
+
+      await window.dataSdk.update({...notif, notif_status: 'read'});
+    };
+
+    window.respondToRecommendation = async function(notifId, action) {
+      const notif = allData.find(d => d.__backendId === notifId);
+      if (!notif) return;
+
+      if (action === 'accept') {
+        if (allData.length >= 999) {
+          showToast('Batas maksimum data tercapai', 'error');
+          return;
+        }
+
+        const data = JSON.parse(notif.notif_data);
+        const user = getUsers().find(u => u.username === data.username || u.email === data.username);
+        
+        if (user) {
+          const inviteResult = await window.dataSdk.create({
+            data_type: 'notification',
+            notif_type: 'invite',
+            notif_target_id: user.user_id,
+            notif_from_user: currentUser.user_id,
+            notif_from_name: currentUser.full_name,
+            notif_class_id: notif.notif_class_id,
+            notif_class_name: notif.notif_class_name,
+            notif_data: JSON.stringify({ role: 'anggota' }),
+            notif_status: 'unread',
+            notif_timestamp: new Date().toISOString(),
+            created_at: new Date().toISOString()
+          });
+
+          if (inviteResult.isOk) {
+            showToast('Undangan telah dikirim', 'success');
+          }
+        }
+      }
+
+      await window.dataSdk.update({...notif, notif_status: 'read'});
+    };
+
+    window.openClassFromNotif = async function(classId, tab) {
+      closeModal('modal-notifications');
+      navigateToClass(classId, tab);
+
+      const notifs = getUserNotifications(currentUser.user_id)
+        .filter(n => n.notif_class_id === classId && n.notif_type === 'message' && n.notif_status === 'unread');
+      
+      for (const notif of notifs) {
+        await window.dataSdk.update({...notif, notif_status: 'read'});
+      }
+    };
+
+    window.setReplyTo = function(messageId, senderName) {
+      replyToMessage = { id: messageId, sender: senderName };
+      const chatForm = document.getElementById('form-chat');
+      
+      let replyIndicator = document.getElementById('reply-indicator');
+      if (!replyIndicator) {
+        replyIndicator = document.createElement('div');
+        replyIndicator.id = 'reply-indicator';
+        chatForm.insertBefore(replyIndicator, chatForm.firstChild);
+      }
+      
+      replyIndicator.innerHTML = `
+        <div class="bg-purple-50 border-l-2 border-purple-500 p-2 rounded-lg flex items-center justify-between mb-2">
+          <div>
+            <p class="text-xs text-purple-600 font-semibold">Membalas ${senderName}</p>
+          </div>
+          <button onclick="cancelReply()" class="text-gray-500 hover:text-gray-700">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      `;
+      
+      document.getElementById('chat-input').focus();
+    };
+
+    window.cancelReply = function() {
+      replyToMessage = null;
+      const indicator = document.getElementById('reply-indicator');
+      if (indicator) indicator.remove();
+    };
+
+    window.openEditMessage = function(messageId) {
+      const message = allData.find(d => d.__backendId === messageId);
+      if (message) {
+        currentEditingMessage = message;
+        document.getElementById('edit-message-input').value = message.message_content;
+        openModal('modal-edit-message');
+      }
+    };
+
+    window.deleteMessage = async function(messageId) {
+      const message = allData.find(d => d.__backendId === messageId);
+      if (message) {
+        const result = await window.dataSdk.update({
+          ...message,
+          message_deleted: true,
+          message_content: 'Pesan telah dihapus'
+        });
+        
+        if (result.isOk) {
+          showToast('Pesan dihapus', 'success');
+        }
+      }
+    };
+
+    window.openReactionModal = function(messageId) {
+      currentReactionMessage = messageId;
+      openModal('modal-reactions');
+    };
+
+    window.addReaction = async function(emoji) {
+      if (!currentReactionMessage) return;
+      
+      const message = allData.find(d => d.__backendId === currentReactionMessage);
+      if (!message) return;
+
+      const reactions = message.message_reactions ? JSON.parse(message.message_reactions) : {};
+      
+      if (!reactions[emoji]) {
+        reactions[emoji] = [];
+      }
+      
+      if (!reactions[emoji].includes(currentUser.user_id)) {
+        reactions[emoji].push(currentUser.user_id);
+      }
+
+      const result = await window.dataSdk.update({
+        ...message,
+        message_reactions: JSON.stringify(reactions)
+      });
+
+      if (result.isOk) {
+        closeModal('modal-reactions');
+        currentReactionMessage = null;
+      }
+    };
+
+    window.toggleReaction = async function(messageId, emoji) {
+      const message = allData.find(d => d.__backendId === messageId);
+      if (!message) return;
+
+      const reactions = message.message_reactions ? JSON.parse(message.message_reactions) : {};
+      
+      if (reactions[emoji] && reactions[emoji].includes(currentUser.user_id)) {
+        reactions[emoji] = reactions[emoji].filter(id => id !== currentUser.user_id);
+        if (reactions[emoji].length === 0) {
+          delete reactions[emoji];
+        }
+      } else {
+        if (!reactions[emoji]) reactions[emoji] = [];
+        reactions[emoji].push(currentUser.user_id);
+      }
+
+      await window.dataSdk.update({
+        ...message,
+        message_reactions: JSON.stringify(reactions)
+      });
+    };
+
+    window.deleteHistoryMonth = async function(month) {
+      const transactions = allData.filter(d => 
+        d.data_type === 'transaction' && 
+        d.transaction_class_id === currentClass.class_id &&
+        d.transaction_month === month &&
+        d.is_history
+      );
+
+      for (const trans of transactions) {
+        await window.dataSdk.delete(trans);
+      }
+
+      showToast(`Riwayat bulan ${month} berhasil dihapus`, 'success');
+    };
+
+    const dataHandler = {
+      onDataChanged(data) {
+        allData = data;
+        
+        if (currentUser) {
+          const userData = data.find(d => d.data_type === 'user' && d.user_id === currentUser.user_id);
+          if (userData) {
+            currentUser = userData;
+            if (userData.dark_mode && !isDarkMode) {
+              toggleDarkMode();
+            } else if (!userData.dark_mode && isDarkMode) {
+              toggleDarkMode();
+            }
+          }
+        }
+
+        if (currentPage === 'home') {
+          updateHomeUI();
+        } else if (currentPage === 'class') {
+          if (currentClass) {
+            const cls = data.find(d => d.data_type === 'class' && d.class_id === currentClass.class_id);
+            if (!cls) {
+              navigateToHome();
+              showToast('Kelas telah dihapus', 'info');
+              return;
+            }
+            currentClass = cls;
+          }
+          updateClassUI();
+        }
+      }
+    };
+
+    async function onConfigChange(config) {
+      const appTitle = config.app_title || defaultConfig.app_title;
+      const welcomeMsg = config.welcome_message || defaultConfig.welcome_message;
+
+      document.getElementById('login-title').textContent = appTitle;
+      document.getElementById('login-subtitle').textContent = welcomeMsg;
+      document.getElementById('home-title').textContent = appTitle;
+    }
+
+    function setupEventListeners() {
+      document.getElementById('tab-login').addEventListener('click', () => {
+        document.getElementById('tab-login').classList.add('bg-white', 'shadow-sm', 'text-purple-600');
+        document.getElementById('tab-login').classList.remove('text-gray-600');
+        document.getElementById('tab-register').classList.remove('bg-white', 'shadow-sm', 'text-purple-600');
+        document.getElementById('tab-register').classList.add('text-gray-600');
+        document.getElementById('form-login').classList.remove('hidden');
+        document.getElementById('form-register').classList.add('hidden');
+      });
+
+      document.getElementById('tab-register').addEventListener('click', () => {
+        document.getElementById('tab-register').classList.add('bg-white', 'shadow-sm', 'text-purple-600');
+        document.getElementById('tab-register').classList.remove('text-gray-600');
+        document.getElementById('tab-login').classList.remove('bg-white', 'shadow-sm', 'text-purple-600');
+        document.getElementById('tab-login').classList.add('text-gray-600');
+        document.getElementById('form-register').classList.remove('hidden');
+        document.getElementById('form-login').classList.add('hidden');
+      });
+
+      document.getElementById('form-login').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = document.getElementById('login-username').value.trim();
+        const password = document.getElementById('login-password').value;
+
+        const user = getUsers().find(u => 
+          (u.username === username || u.email === username) && u.password === password
+        );
+
+        if (user) {
+          currentUser = user;
+          navigateToHome();
+          showToast('Login berhasil! Selamat datang 🎉', 'success');
+        } else {
+          showToast('Username/email atau password salah', 'error');
+        }
+      });
+
+      document.getElementById('form-register').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const fullname = document.getElementById('register-fullname').value.trim();
+        const username = document.getElementById('register-username').value.trim();
+        const email = document.getElementById('register-email').value.trim();
+        const password = document.getElementById('register-password').value;
+
+        if (!fullname || !username || !email || !password) {
+          showToast('Semua field harus diisi', 'error');
+          return;
+        }
+
+        if (password.length < 6) {
+          showToast('Password minimal 6 karakter', 'error');
+          return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          showToast('Format email tidak valid', 'error');
+          return;
+        }
+
+        const exists = getUsers().some(u => u.username === username || u.email === email);
+        if (exists) {
+          showToast('Username atau email sudah digunakan', 'error');
+          return;
+        }
+
+        if (allData.length >= 999) {
+          showToast('Batas maksimum data tercapai (999 records)', 'error');
+          return;
+        }
+
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<div class="loading-spinner mx-auto"></div>';
+
+        try {
+          const userId = generateId();
+          const result = await window.dataSdk.create({
+            data_type: 'user',
+            user_id: userId,
+            username,
+            email,
+            password,
+            full_name: fullname,
+            phone: '',
+            avatar_color: getAvatarColor(fullname),
+            dark_mode: false,
+            created_at: new Date().toISOString()
+          });
+
+          if (result.isOk) {
+            showToast('Pendaftaran berhasil! Silakan login', 'success');
+            document.getElementById('tab-login').click();
+            document.getElementById('form-register').reset();
+          } else {
+            const errorMsg = result.error?.message || 'Pendaftaran gagal. Silakan coba lagi';
+            showToast(errorMsg, 'error');
+            console.error('Registration error:', result.error);
+          }
+        } catch (error) {
+          showToast('Terjadi kesalahan sistem. Silakan coba lagi', 'error');
+          console.error('Registration exception:', error);
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalText;
+        }
+      });
+
+      document.getElementById('btn-dark-mode').addEventListener('click', toggleDarkMode);
+
+      document.getElementById('btn-notifications').addEventListener('click', () => {
+        openModal('modal-notifications');
+        renderNotifications();
+      });
+
+      document.getElementById('btn-close-notif').addEventListener('click', () => {
+        closeModal('modal-notifications');
+      });
+
+      document.getElementById('filter-unread').addEventListener('click', () => {
+        currentNotifFilter = 'unread';
+        document.getElementById('filter-unread').className = 'px-3 py-1 text-sm rounded-lg bg-purple-500 text-white';
+        document.getElementById('filter-read').className = 'px-3 py-1 text-sm rounded-lg text-gray-600 hover:bg-gray-100';
+        document.getElementById('filter-all').className = 'px-3 py-1 text-sm rounded-lg text-gray-600 hover:bg-gray-100';
+        renderNotifications();
+      });
+
+      document.getElementById('filter-read').addEventListener('click', () => {
+        currentNotifFilter = 'read';
+        document.getElementById('filter-read').className = 'px-3 py-1 text-sm rounded-lg bg-purple-500 text-white';
+        document.getElementById('filter-unread').className = 'px-3 py-1 text-sm rounded-lg text-gray-600 hover:bg-gray-100';
+        document.getElementById('filter-all').className = 'px-3 py-1 text-sm rounded-lg text-gray-600 hover:bg-gray-100';
+        renderNotifications();
+      });
+
+      document.getElementById('filter-all').addEventListener('click', () => {
+        currentNotifFilter = 'all';
+        document.getElementById('filter-all').className = 'px-3 py-1 text-sm rounded-lg bg-purple-500 text-white';
+        document.getElementById('filter-unread').className = 'px-3 py-1 text-sm rounded-lg text-gray-600 hover:bg-gray-100';
+        document.getElementById('filter-read').className = 'px-3 py-1 text-sm rounded-lg text-gray-600 hover:bg-gray-100';
+        renderNotifications();
+      });
+
+      document.getElementById('btn-profile').addEventListener('click', () => {
+        if (!currentUser) return;
+        
+        document.getElementById('user-avatar-modal').textContent = currentUser.full_name.charAt(0).toUpperCase();
+        document.getElementById('user-avatar-modal').style.background = currentUser.avatar_color;
+        document.getElementById('user-name-modal').textContent = currentUser.full_name;
+        document.getElementById('user-email-modal').textContent = currentUser.email;
+        document.getElementById('edit-fullname').value = currentUser.full_name;
+        document.getElementById('edit-phone').value = currentUser.phone || '';
+        
+        openModal('modal-profile');
+      });
+
+      document.getElementById('btn-save-profile').addEventListener('click', async () => {
+        const userData = allData.find(d => d.data_type === 'user' && d.user_id === currentUser.user_id);
+        if (!userData) return;
+
+        const saveBtn = document.getElementById('btn-save-profile');
+        const btnText = document.getElementById('save-profile-text');
+        const spinner = document.getElementById('save-profile-spinner');
+        
+        saveBtn.disabled = true;
+        btnText.classList.add('hidden');
+        spinner.classList.remove('hidden');
+
+        const updatedUser = {
+          ...userData,
+          full_name: document.getElementById('edit-fullname').value.trim(),
+          phone: document.getElementById('edit-phone').value.trim()
+        };
+
+        const result = await window.dataSdk.update(updatedUser);
+        
+        saveBtn.disabled = false;
+        btnText.classList.remove('hidden');
+        spinner.classList.add('hidden');
+        
+        if (result.isOk) {
+          showToast('Profil berhasil diperbarui', 'success');
+          closeModal('modal-profile');
+        } else {
+          showToast('Gagal memperbarui profil', 'error');
+        }
+      });
+
+      document.getElementById('btn-logout').addEventListener('click', () => {
+        currentUser = null;
+        currentClass = null;
+        showPage('login');
+        closeModal('modal-profile');
+        showToast('Logout berhasil', 'success');
+      });
+
+      document.getElementById('btn-scroll-classes').addEventListener('click', () => {
+        document.getElementById('classes-section').scrollIntoView({ behavior: 'smooth' });
+      });
+
+      document.getElementById('btn-show-tasks').addEventListener('click', () => {
+        const userClasses = getClasses().filter(c => {
+          return c.admin_id === currentUser.user_id || 
+                 c.ketua_id === currentUser.user_id ||
+                 getClassMembers(c.class_id).some(m => m.member_user_id === currentUser.user_id);
+        });
+
+        const tasksList = document.getElementById('tasks-overview-list');
+        let allTasks = [];
+        
+        userClasses.forEach(cls => {
+          const tasks = getClassTasks(cls.class_id);
+          tasks.forEach(task => {
+            allTasks.push({ ...task, className: cls.class_name, classId: cls.class_id });
+          });
+        });
+
+        if (allTasks.length === 0) {
+          tasksList.innerHTML = '<p class="text-gray-500 text-center py-4">Tidak ada tugas</p>';
+        } else {
+          tasksList.innerHTML = allTasks.map(task => `
+            <div class="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 cursor-pointer" onclick="navigateToClass('${task.classId}', 'info')">
+              <div class="flex items-start justify-between mb-2">
+                <h4 class="font-bold text-gray-800">${task.task_title}</h4>
+                <span class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">${task.className}</span>
+              </div>
+              <p class="text-sm text-gray-600">${task.task_description || 'Tidak ada deskripsi'}</p>
+              ${task.task_deadline ? `<p class="text-xs text-gray-500 mt-2">Deadline: ${formatDate(task.task_deadline)}</p>` : ''}
+            </div>
+          `).join('');
+        }
+
+        openModal('modal-tasks-overview');
+      });
+
+      document.getElementById('btn-show-messages').addEventListener('click', () => {
+        const userClasses = getClasses().filter(c => {
+          return c.admin_id === currentUser.user_id || 
+                 c.ketua_id === currentUser.user_id ||
+                 getClassMembers(c.class_id).some(m => m.member_user_id === currentUser.user_id);
+        });
+
+        const messagesList = document.getElementById('messages-overview-list');
+        let classMessages = [];
+        
+        userClasses.forEach(cls => {
+          const messages = getClassMessages(cls.class_id);
+          if (messages.length > 0) {
+            const lastMsg = messages.sort((a, b) => new Date(b.message_timestamp) - new Date(a.message_timestamp))[0];
+            classMessages.push({ ...lastMsg, className: cls.class_name, classId: cls.class_id, count: messages.length });
+          }
+        });
+
+        if (classMessages.length === 0) {
+          messagesList.innerHTML = '<p class="text-gray-500 text-center py-4">Tidak ada pesan</p>';
+        } else {
+          messagesList.innerHTML = classMessages.map(msg => `
+            <div class="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 cursor-pointer" onclick="navigateToClass('${msg.classId}', 'chat')">
+              <div class="flex items-start justify-between mb-2">
+                <h4 class="font-bold text-gray-800">${msg.className}</h4>
+                <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">${msg.count} pesan</span>
+              </div>
+              <p class="text-sm text-gray-600"><strong>${msg.message_sender_name}:</strong> ${msg.message_content}</p>
+              <p class="text-xs text-gray-500 mt-2">${formatDateTime(msg.message_timestamp)}</p>
+            </div>
+          `).join('');
+        }
+
+        openModal('modal-messages-overview');
+      });
+
+      document.getElementById('btn-close-tasks').addEventListener('click', () => {
+        closeModal('modal-tasks-overview');
+      });
+
+      document.getElementById('btn-close-messages').addEventListener('click', () => {
+        closeModal('modal-messages-overview');
+      });
+
+      document.getElementById('btn-create-class').addEventListener('click', () => {
+        openModal('modal-create-class');
+      });
+
+      document.getElementById('form-create-class').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        if (allData.length >= 999) {
+          showToast('Batas maksimum data tercapai', 'error');
+          return;
+        }
+
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const btnText = document.getElementById('create-class-text');
+        const spinner = document.getElementById('create-class-spinner');
+        
+        submitBtn.disabled = true;
+        btnText.classList.add('hidden');
+        spinner.classList.remove('hidden');
+
+        const className = document.getElementById('class-name-input').value.trim();
+        const classDesc = document.getElementById('class-desc-input').value.trim();
+        const classId = generateId();
+
+        const result = await window.dataSdk.create({
+          data_type: 'class',
+          class_id: classId,
+          class_name: className,
+          class_description: classDesc,
+          admin_id: currentUser.user_id,
+          ketua_id: '',
+          created_at: new Date().toISOString()
+        });
+
+        submitBtn.disabled = false;
+        btnText.classList.remove('hidden');
+        spinner.classList.add('hidden');
+
+        if (result.isOk) {
+          showToast('Kelas berhasil dibuat! 🎉', 'success');
+          closeModal('modal-create-class');
+          document.getElementById('form-create-class').reset();
+        } else {
+          showToast('Gagal membuat kelas', 'error');
+        }
+      });
+
+      document.getElementById('btn-back-home').addEventListener('click', () => {
+        navigateToHome();
+      });
+
+      const classTabs = ['info', 'finance', 'finance-history', 'members', 'chat'];
+      classTabs.forEach(tab => {
+        document.getElementById(`tab-${tab}`).addEventListener('click', () => {
+          classTabs.forEach(t => {
+            document.getElementById(`tab-${t}`).classList.remove('gradient-primary', 'text-white');
+            document.getElementById(`tab-${t}`).classList.add('text-gray-600', 'hover:bg-gray-100');
+            document.getElementById(`panel-${t}`).classList.add('hidden');
+          });
+          
+          document.getElementById(`tab-${tab}`).classList.add('gradient-primary', 'text-white');
+          document.getElementById(`tab-${tab}`).classList.remove('text-gray-600', 'hover:bg-gray-100');
+          document.getElementById(`panel-${tab}`).classList.remove('hidden');
+
+          if (tab === 'finance-history') {
+            renderFinanceHistory();
+          }
+        });
+      });
+
+      document.getElementById('month-filter').addEventListener('change', () => {
+        renderFinance();
+      });
+
+      document.getElementById('btn-view-chart').addEventListener('click', () => {
+        openModal('modal-chart');
+        renderFinanceChart();
+      });
+
+      document.getElementById('btn-reset-finance').addEventListener('click', async () => {
+        const currentMonth = new Date().toISOString().slice(0, 7);
+        const transactions = getClassTransactions(currentClass.class_id).filter(t => !t.is_archived && !t.is_history);
+
+        if (transactions.length === 0) {
+          showToast('Tidak ada transaksi untuk direset', 'info');
+          return;
+        }
+
+        const confirmMessage = `Reset keuangan akan memindahkan semua transaksi aktif ke riwayat. Lanjutkan?`;
+        
+        const overlay = document.createElement('div');
+        overlay.className = 'fixed inset-0 z-[60] modal-overlay';
+        overlay.innerHTML = `
+          <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm p-4">
+            <div class="bg-white rounded-3xl shadow-2xl p-6 popup-animation">
+              <h3 class="text-xl font-bold text-gray-800 mb-4">Konfirmasi Reset</h3>
+              <p class="text-gray-600 mb-6">${confirmMessage}</p>
+              <div class="flex gap-3">
+                <button id="confirm-cancel" class="flex-1 py-3 rounded-xl font-semibold border-2 border-gray-300 hover:border-gray-400 transition-colors">
+                  Batal
+                </button>
+                <button id="confirm-reset" class="flex-1 btn-primary py-3 rounded-xl font-semibold text-white">
+                  Ya, Reset
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(overlay);
+
+        document.getElementById('confirm-cancel').addEventListener('click', () => {
+          overlay.remove();
+        });
+
+        document.getElementById('confirm-reset').addEventListener('click', async () => {
+          overlay.remove();
+
+          for (const trans of transactions) {
+            await window.dataSdk.update({
+              ...trans,
+              is_history: true
+            });
+          }
+
+          showToast('Keuangan berhasil direset ke riwayat', 'success');
+        });
+      });
+
+      document.getElementById('btn-close-chart').addEventListener('click', () => {
+        closeModal('modal-chart');
+        if (financeChart) {
+          financeChart.destroy();
+          financeChart = null;
+        }
+      });
+
+      document.getElementById('btn-archive-month').addEventListener('click', async () => {
+        const selectedMonth = document.getElementById('month-filter').value;
+        if (selectedMonth === 'all') return;
+
+        if (confirm(`Arsipkan semua transaksi bulan ${selectedMonth}? Transaksi akan disembunyikan dari riwayat aktif.`)) {
+          const transactions = getClassTransactions(currentClass.class_id, selectedMonth);
+          
+          for (const trans of transactions) {
+            if (!trans.is_archived) {
+              await window.dataSdk.update({...trans, is_archived: true});
+            }
+          }
+          
+          showToast(`Transaksi bulan ${selectedMonth} berhasil diarsipkan`, 'success');
+        }
+      });
+
+      document.getElementById('btn-add-task').addEventListener('click', () => {
+        openModal('modal-add-task');
+      });
+
+      document.getElementById('form-add-task').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        if (allData.length >= 999) {
+          showToast('Batas maksimum data tercapai', 'error');
+          return;
+        }
+
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const btnText = document.getElementById('add-task-text');
+        const spinner = document.getElementById('add-task-spinner');
+        
+        submitBtn.disabled = true;
+        btnText.classList.add('hidden');
+        spinner.classList.remove('hidden');
+
+        const title = document.getElementById('task-title-input').value.trim();
+        const subject = document.getElementById('task-subject-input').value.trim();
+        const deadline = document.getElementById('task-deadline-input').value;
+        const description = document.getElementById('task-desc-input').value.trim();
+
+        const result = await window.dataSdk.create({
+          data_type: 'task',
+          task_class_id: currentClass.class_id,
+          task_title: title,
+          task_subject: subject,
+          task_deadline: deadline || '',
+          task_description: description,
+          task_created_by: currentUser.full_name,
+          created_at: new Date().toISOString()
+        });
+
+        submitBtn.disabled = false;
+        btnText.classList.remove('hidden');
+        spinner.classList.add('hidden');
+
+        if (result.isOk) {
+          showToast('Tugas berhasil ditambahkan', 'success');
+          closeModal('modal-add-task');
+          document.getElementById('form-add-task').reset();
+        } else {
+          showToast('Gagal menambahkan tugas', 'error');
+        }
+      });
+
+      document.getElementById('btn-add-income').addEventListener('click', () => {
+        document.getElementById('transaction-type-input').value = 'income';
+        document.getElementById('transaction-modal-title').textContent = 'Tambah Pemasukan';
+        openModal('modal-add-transaction');
+      });
+
+      document.getElementById('btn-add-expense').addEventListener('click', () => {
+        document.getElementById('transaction-type-input').value = 'expense';
+        document.getElementById('transaction-modal-title').textContent = 'Tambah Pengeluaran';
+        openModal('modal-add-transaction');
+      });
+
+      document.getElementById('form-add-transaction').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        if (allData.length >= 999) {
+          showToast('Batas maksimum data tercapai', 'error');
+          return;
+        }
+
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const btnText = document.getElementById('add-transaction-text');
+        const spinner = document.getElementById('add-transaction-spinner');
+        
+        submitBtn.disabled = true;
+        btnText.classList.add('hidden');
+        spinner.classList.remove('hidden');
+
+        const type = document.getElementById('transaction-type-input').value;
+        const amount = parseInt(document.getElementById('transaction-amount-input').value);
+        const category = document.getElementById('transaction-category-input').value.trim();
+        const payer = document.getElementById('transaction-payer-input').value.trim();
+        const description = document.getElementById('transaction-desc-input').value.trim();
+
+        const now = new Date();
+        const month = now.toISOString().slice(0, 7);
+
+        const result = await window.dataSdk.create({
+          data_type: 'transaction',
+          transaction_class_id: currentClass.class_id,
+          transaction_type: type,
+          transaction_month: month,
+          amount,
+          category,
+          payer_name: payer,
+          description,
+          is_archived: false,
+          created_by: currentUser.full_name,
+          created_at: new Date().toISOString()
+        });
+
+        submitBtn.disabled = false;
+        btnText.classList.remove('hidden');
+        spinner.classList.add('hidden');
+
+        if (result.isOk) {
+          showToast(type === 'income' ? 'Pemasukan berhasil ditambahkan' : 'Pengeluaran berhasil dicatat', 'success');
+          closeModal('modal-add-transaction');
+          document.getElementById('form-add-transaction').reset();
+        } else {
+          showToast('Gagal menyimpan transaksi', 'error');
+        }
+      });
+
+      document.getElementById('btn-recommend-member').addEventListener('click', () => {
+        openModal('modal-recommend-member');
+      });
+
+      document.getElementById('form-recommend-member').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        if (allData.length >= 999) {
+          showToast('Batas maksimum data tercapai', 'error');
+          return;
+        }
+
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const btnText = document.getElementById('recommend-text');
+        const spinner = document.getElementById('recommend-spinner');
+        
+        submitBtn.disabled = true;
+        btnText.classList.add('hidden');
+        spinner.classList.remove('hidden');
+
+        const usernameOrEmail = document.getElementById('recommend-username-input').value.trim();
+        const user = getUsers().find(u => u.username === usernameOrEmail || u.email === usernameOrEmail);
+        
+        if (!user) {
+          submitBtn.disabled = false;
+          btnText.classList.remove('hidden');
+          spinner.classList.add('hidden');
+          showToast('User tidak ditemukan', 'error');
+          return;
+        }
+
+        const approvers = [currentClass.admin_id];
+        if (currentClass.ketua_id) approvers.push(currentClass.ketua_id);
+
+        for (const approverId of approvers) {
+          if (allData.length >= 999) break;
+          
+          await window.dataSdk.create({
+            data_type: 'notification',
+            notif_type: 'recommendation',
+            notif_target_id: approverId,
+            notif_from_user: currentUser.user_id,
+            notif_from_name: currentUser.full_name,
+            notif_class_id: currentClass.class_id,
+            notif_class_name: currentClass.class_name,
+            notif_data: JSON.stringify({ username: usernameOrEmail }),
+            notif_status: 'unread',
+            notif_timestamp: new Date().toISOString(),
+            created_at: new Date().toISOString()
+          });
+        }
+
+        submitBtn.disabled = false;
+        btnText.classList.remove('hidden');
+        spinner.classList.add('hidden');
+
+        showToast('Rekomendasi telah dikirim', 'success');
+        closeModal('modal-recommend-member');
+        document.getElementById('form-recommend-member').reset();
+      });
+
+      document.getElementById('btn-invite-member').addEventListener('click', () => {
+        openModal('modal-invite-member');
+      });
+
+      document.getElementById('form-invite-member').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        if (allData.length >= 999) {
+          showToast('Batas maksimum data tercapai', 'error');
+          return;
+        }
+
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const btnText = document.getElementById('invite-member-text');
+        const spinner = document.getElementById('invite-member-spinner');
+        
+        submitBtn.disabled = true;
+        btnText.classList.add('hidden');
+        spinner.classList.remove('hidden');
+
+        const usernameOrEmail = document.getElementById('invite-username-input').value.trim();
+        const role = document.getElementById('invite-role-input').value;
+
+        const user = getUsers().find(u => u.username === usernameOrEmail || u.email === usernameOrEmail);
+        if (!user) {
+          submitBtn.disabled = false;
+          btnText.classList.remove('hidden');
+          spinner.classList.add('hidden');
+          showToast('User tidak ditemukan', 'error');
+          return;
+        }
+
+        const existingMember = getClassMembers(currentClass.class_id).find(m => m.member_user_id === user.user_id);
+        if (existingMember || user.user_id === currentClass.admin_id || user.user_id === currentClass.ketua_id) {
+          submitBtn.disabled = false;
+          btnText.classList.remove('hidden');
+          spinner.classList.add('hidden');
+          showToast('User sudah menjadi anggota kelas', 'error');
+          return;
+        }
+
+        const result = await window.dataSdk.create({
+          data_type: 'notification',
+          notif_type: 'invite',
+          notif_target_id: user.user_id,
+          notif_from_user: currentUser.user_id,
+          notif_from_name: currentUser.full_name,
+          notif_class_id: currentClass.class_id,
+          notif_class_name: currentClass.class_name,
+          notif_data: JSON.stringify({ role }),
+          notif_status: 'unread',
+          notif_timestamp: new Date().toISOString(),
+          created_at: new Date().toISOString()
+        });
+
+        submitBtn.disabled = false;
+        btnText.classList.remove('hidden');
+        spinner.classList.add('hidden');
+
+        if (result.isOk) {
+          showToast('Undangan telah dikirim', 'success');
+          closeModal('modal-invite-member');
+          document.getElementById('form-invite-member').reset();
+        } else {
+          showToast('Gagal mengirim undangan', 'error');
+        }
+      });
+
+      document.getElementById('btn-class-settings').addEventListener('click', () => {
+        document.getElementById('settings-class-name').value = currentClass.class_name;
+        document.getElementById('settings-class-desc').value = currentClass.class_description || '';
+        
+        const role = getUserRole(currentUser.user_id, currentClass.class_id);
+        const canDelete = role === 'admin' || role === 'ketua';
+        document.getElementById('btn-delete-class').classList.toggle('hidden', !canDelete);
+
+        if (role === 'admin') {
+          document.getElementById('ketua-settings').classList.remove('hidden');
+          const ketuaSelect = document.getElementById('settings-ketua');
+          const members = getClassMembers(currentClass.class_id);
+          
+          ketuaSelect.innerHTML = '<option value="">Tidak ada (Admin sebagai ketua)</option>' +
+            members.map(m => {
+              const user = getUsers().find(u => u.user_id === m.member_user_id);
+              return `<option value="${m.member_user_id}" ${currentClass.ketua_id === m.member_user_id ? 'selected' : ''}>${user ? user.full_name : 'Unknown'}</option>`;
+            }).join('');
+        } else {
+          document.getElementById('ketua-settings').classList.add('hidden');
+        }
+
+        openModal('modal-class-settings');
+      });
+
+      document.getElementById('form-class-settings').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const classData = allData.find(d => d.data_type === 'class' && d.class_id === currentClass.class_id);
+        if (!classData) return;
+
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const btnText = document.getElementById('settings-text');
+        const spinner = document.getElementById('settings-spinner');
+        
+        submitBtn.disabled = true;
+        btnText.classList.add('hidden');
+        spinner.classList.remove('hidden');
+
+        const updatedClass = {
+          ...classData,
+          class_name: document.getElementById('settings-class-name').value.trim(),
+          class_description: document.getElementById('settings-class-desc').value.trim()
+        };
+
+        const role = getUserRole(currentUser.user_id, currentClass.class_id);
+        if (role === 'admin') {
+          updatedClass.ketua_id = document.getElementById('settings-ketua').value;
+        }
+
+        const result = await window.dataSdk.update(updatedClass);
+        
+        submitBtn.disabled = false;
+        btnText.classList.remove('hidden');
+        spinner.classList.add('hidden');
+        
+        if (result.isOk) {
+          showToast('Pengaturan kelas berhasil diperbarui', 'success');
+          closeModal('modal-class-settings');
+        } else {
+          showToast('Gagal memperbarui pengaturan', 'error');
+        }
+      });
+
+      document.getElementById('btn-delete-class').addEventListener('click', async () => {
+        const confirmMessage = `Apakah Anda yakin ingin menghapus kelas "${currentClass.class_name}"?\n\nKelas akan dihapus SEPENUHNYA dan PERMANEN dari sistem. Semua data termasuk anggota, tugas, transaksi, dan pesan akan HILANG dan TIDAK DAPAT DIKEMBALIKAN!\n\nKetik "HAPUS" untuk melanjutkan.`;
+        
+        const overlay = document.createElement('div');
+        overlay.className = 'fixed inset-0 z-[70] modal-overlay';
+        overlay.innerHTML = `
+          <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-4">
+            <div class="bg-white rounded-3xl shadow-2xl p-6 popup-animation">
+              <div class="text-center mb-4">
+                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg class="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                  </svg>
+                </div>
+                <h3 class="text-xl font-bold text-red-600 mb-2">⚠️ PERINGATAN KERAS</h3>
+                <p class="text-sm text-gray-700 mb-4">Anda akan menghapus kelas <strong>"${currentClass.class_name}"</strong> secara PERMANEN!</p>
+              </div>
+              
+              <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-4 rounded">
+                <ul class="text-xs text-red-800 space-y-1">
+                  <li>✗ Semua anggota akan dikeluarkan</li>
+                  <li>✗ Semua tugas akan terhapus</li>
+                  <li>✗ Semua transaksi akan hilang</li>
+                  <li>✗ Semua pesan akan hilang</li>
+                  <li>✗ Data TIDAK DAPAT dikembalikan</li>
+                </ul>
+              </div>
+
+              <div class="mb-4">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  Ketik <span class="text-red-600">"HAPUS"</span> untuk melanjutkan:
+                </label>
+                <input type="text" id="confirm-delete-input" class="input-modern w-full px-4 py-3 rounded-xl" placeholder="Ketik HAPUS">
+              </div>
+
+              <div class="flex gap-3">
+                <button id="confirm-cancel-delete" class="flex-1 py-3 rounded-xl font-semibold border-2 border-gray-300 hover:border-gray-400 transition-colors">
+                  Batalkan
+                </button>
+                <button id="confirm-delete-class" class="flex-1 py-3 rounded-xl font-semibold bg-red-600 hover:bg-red-700 text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                  Hapus Permanen
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(overlay);
+
+        const input = document.getElementById('confirm-delete-input');
+        const confirmBtn = document.getElementById('confirm-delete-class');
+        
+        input.addEventListener('input', () => {
+          confirmBtn.disabled = input.value.trim().toUpperCase() !== 'HAPUS';
+        });
+
+        document.getElementById('confirm-cancel-delete').addEventListener('click', () => {
+          overlay.remove();
+        });
+
+        document.getElementById('confirm-delete-class').addEventListener('click', async () => {
+          if (input.value.trim().toUpperCase() !== 'HAPUS') return;
+          
+          overlay.remove();
+          
+          const loadingOverlay = document.createElement('div');
+          loadingOverlay.className = 'fixed inset-0 z-[70] loading-overlay flex items-center justify-center';
+          loadingOverlay.innerHTML = `
+            <div class="bg-white rounded-3xl p-8 shadow-2xl text-center popup-animation">
+              <div class="loading-spinner mx-auto mb-4" style="width: 40px; height: 40px; border-width: 4px;"></div>
+              <p class="text-gray-700 font-semibold">Menghapus kelas secara permanen...</p>
+              <p class="text-sm text-gray-500 mt-2">Mohon tunggu</p>
+            </div>
+          `;
+          document.body.appendChild(loadingOverlay);
+
+          try {
+            const classData = allData.find(d => d.data_type === 'class' && d.class_id === currentClass.class_id);
+            const members = getClassMembers(currentClass.class_id);
+            const transactions = getClassTransactions(currentClass.class_id);
+            const tasks = getClassTasks(currentClass.class_id);
+            const messages = getClassMessages(currentClass.class_id);
+
+            for (const member of members) {
+              await window.dataSdk.delete(member);
+            }
+            for (const trans of transactions) {
+              await window.dataSdk.delete(trans);
+            }
+            for (const task of tasks) {
+              await window.dataSdk.delete(task);
+            }
+            for (const msg of messages) {
+              await window.dataSdk.delete(msg);
+            }
+
+            if (classData) {
+              await window.dataSdk.delete(classData);
+            }
+
+            loadingOverlay.remove();
+            closeModal('modal-class-settings');
+            navigateToHome();
+            showToast('🗑️ Kelas berhasil dihapus secara permanen', 'success');
+          } catch (error) {
+            loadingOverlay.remove();
+            showToast('Gagal menghapus kelas. Silakan coba lagi', 'error');
+            console.error('Delete class error:', error);
+          }
+        });
+      });
+
+      document.getElementById('form-chat').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        if (allData.length >= 999) {
+          showToast('Batas maksimum data tercapai', 'error');
+          return;
+        }
+
+        const input = document.getElementById('chat-input');
+        const message = input.value.trim();
+        if (!message) return;
+
+        const messageData = {
+          data_type: 'message',
+          message_class_id: currentClass.class_id,
+          message_sender_id: currentUser.user_id,
+          message_sender_name: currentUser.full_name,
+          message_content: message,
+          message_timestamp: new Date().toISOString(),
+          message_edited: false,
+          message_deleted: false,
+          message_reply_to: replyToMessage ? replyToMessage.id : '',
+          message_reactions: '',
+          created_at: new Date().toISOString()
+        };
+
+        const result = await window.dataSdk.create(messageData);
+
+        if (result.isOk) {
+          input.value = '';
+          cancelReply();
+
+          const members = getClassMembers(currentClass.class_id);
+          const allMembers = [currentClass.admin_id, ...members.map(m => m.member_user_id)];
+          
+          for (const memberId of allMembers) {
+            if (memberId !== currentUser.user_id && allData.length < 999) {
+              await window.dataSdk.create({
+                data_type: 'notification',
+                notif_type: 'message',
+                notif_target_id: memberId,
+                notif_from_user: currentUser.user_id,
+                notif_from_name: currentUser.full_name,
+                notif_class_id: currentClass.class_id,
+                notif_class_name: currentClass.class_name,
+                notif_data: message,
+                notif_status: 'unread',
+                notif_timestamp: new Date().toISOString(),
+                created_at: new Date().toISOString()
+              });
+            }
+          }
+        } else {
+          showToast('Gagal mengirim pesan', 'error');
+        }
+      });
+
+      document.getElementById('form-edit-message').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        if (!currentEditingMessage) return;
+
+        const newContent = document.getElementById('edit-message-input').value.trim();
+        if (!newContent) return;
+
+        const result = await window.dataSdk.update({
+          ...currentEditingMessage,
+          message_content: newContent,
+          message_edited: true
+        });
+
+        if (result.isOk) {
+          showToast('Pesan berhasil diedit', 'success');
+          closeModal('modal-edit-message');
+          currentEditingMessage = null;
+        } else {
+          showToast('Gagal mengedit pesan', 'error');
+        }
+      });
+
+      document.getElementById('btn-cancel-edit-message').addEventListener('click', () => {
+        closeModal('modal-edit-message');
+        currentEditingMessage = null;
+      });
+
+      document.getElementById('overlay-edit-message').addEventListener('click', () => {
+        closeModal('modal-edit-message');
+        currentEditingMessage = null;
+      });
+
+      document.getElementById('overlay-reactions').addEventListener('click', () => {
+        closeModal('modal-reactions');
+        currentReactionMessage = null;
+      });
+
+      ['create-class', 'profile', 'add-task', 'add-transaction', 'invite-member', 'class-settings', 'notifications', 'recommend-member', 'tasks-overview', 'messages-overview', 'chart'].forEach(modal => {
+        const overlay = document.getElementById(`overlay-${modal}`);
+        if (overlay) {
+          overlay.addEventListener('click', () => {
+            closeModal(`modal-${modal}`);
+            if (modal === 'chart' && financeChart) {
+              financeChart.destroy();
+              financeChart = null;
+            }
+          });
+        }
+
+        const cancelBtn = document.getElementById(`btn-cancel-${modal}`);
+        if (cancelBtn) {
+          cancelBtn.addEventListener('click', () => closeModal(`modal-${modal}`));
+        }
+      });
+
+      document.getElementById('btn-cancel-settings').addEventListener('click', () => closeModal('modal-class-settings'));
+      document.getElementById('btn-cancel-recommend').addEventListener('click', () => closeModal('modal-recommend-member'));
+    }
+
+    function renderFinanceChart() {
+      if (financeChart) {
+        financeChart.destroy();
+      }
+
+      const ctx = document.getElementById('finance-chart').getContext('2d');
+      const transactions = getClassTransactions(currentClass.class_id);
+
+      const monthlyData = {};
+      transactions.forEach(t => {
+        if (!t.is_archived && t.transaction_month) {
+          if (!monthlyData[t.transaction_month]) {
+            monthlyData[t.transaction_month] = { income: 0, expense: 0 };
+          }
+          if (t.transaction_type === 'income') {
+            monthlyData[t.transaction_month].income += t.amount;
+          } else {
+            monthlyData[t.transaction_month].expense += t.amount;
+          }
+        }
+      });
+
+      const sortedMonths = Object.keys(monthlyData).sort();
+      const incomeData = sortedMonths.map(m => monthlyData[m].income);
+      const expenseData = sortedMonths.map(m => monthlyData[m].expense);
+
+      financeChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: sortedMonths,
+          datasets: [
+            {
+              label: 'Pemasukan',
+              data: incomeData,
+              backgroundColor: 'rgba(52, 211, 153, 0.5)',
+              borderColor: 'rgb(52, 211, 153)',
+              borderWidth: 2
+            },
+            {
+              label: 'Pengeluaran',
+              data: expenseData,
+              backgroundColor: 'rgba(248, 113, 113, 0.5)',
+              borderColor: 'rgb(248, 113, 113)',
+              borderWidth: 2
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            title: {
+              display: true,
+              text: 'Grafik Pemasukan & Pengeluaran per Bulan'
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function(value) {
+                  return 'Rp ' + value.toLocaleString('id-ID');
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function renderHistoryChart() {
+      if (historyChart) {
+        historyChart.destroy();
+      }
+
+      if (!currentHistoryFolder) return;
+
+      const ctx = document.getElementById('history-chart').getContext('2d');
+      const allTransactions = getClassTransactions(currentClass.class_id);
+      const transactions = allTransactions.filter(t => t.is_history && t.transaction_month === currentHistoryFolder);
+
+      const incomeTransactions = transactions.filter(t => t.transaction_type === 'income');
+      const expenseTransactions = transactions.filter(t => t.transaction_type === 'expense');
+
+      const incomeCategories = {};
+      const expenseCategories = {};
+
+      incomeTransactions.forEach(t => {
+        if (!incomeCategories[t.category]) incomeCategories[t.category] = 0;
+        incomeCategories[t.category] += t.amount;
+      });
+
+      expenseTransactions.forEach(t => {
+        if (!expenseCategories[t.category]) expenseCategories[t.category] = 0;
+        expenseCategories[t.category] += t.amount;
+      });
+
+      const incomeLabels = Object.keys(incomeCategories);
+      const incomeData = Object.values(incomeCategories);
+      const expenseLabels = Object.keys(expenseCategories);
+      const expenseData = Object.values(expenseCategories);
+
+      document.getElementById('history-chart-title').textContent = `Grafik ${currentHistoryFolder}`;
+
+      historyChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: [...incomeLabels.map(l => `💰 ${l}`), ...expenseLabels.map(l => `💸 ${l}`)],
+          datasets: [{
+            label: 'Jumlah',
+            data: [...incomeData, ...expenseData],
+            backgroundColor: [
+              ...incomeLabels.map(() => 'rgba(52, 211, 153, 0.7)'),
+              ...expenseLabels.map(() => 'rgba(248, 113, 113, 0.7)')
+            ],
+            borderColor: [
+              ...incomeLabels.map(() => 'rgb(52, 211, 153)'),
+              ...expenseLabels.map(() => 'rgb(248, 113, 113)')
+            ],
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'right',
+            },
+            title: {
+              display: true,
+              text: `Distribusi Transaksi - ${currentHistoryFolder}`
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const label = context.label || '';
+                  const value = context.parsed || 0;
+                  return label + ': ' + formatCurrency(value);
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    async function init() {
+      if (window.dataSdk) {
+        const result = await window.dataSdk.init(dataHandler);
+        if (!result.isOk) {
+          showToast('Gagal menghubungkan ke database', 'error');
+          console.error('Data SDK initialization failed:', result.error);
+        }
+      }
+
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange,
+          mapToCapabilities: (config) => ({
+            recolorables: [],
+            borderables: [],
+            fontEditable: undefined,
+            fontSizeable: undefined
+          }),
+          mapToEditPanelValues: (config) => new Map([
+            ['app_title', config.app_title || defaultConfig.app_title],
+            ['welcome_message', config.welcome_message || defaultConfig.welcome_message]
+          ])
+        });
+      }
+
+      setupEventListeners();
+      updateCurrentDate();
+      setInterval(updateCurrentDate, 60000);
+
+      onConfigChange(window.elementSdk?.config || defaultConfig);
+    }
+
+    init();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c1324efb1b9d4a0',t:'MTc2ODk2MDA1NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
