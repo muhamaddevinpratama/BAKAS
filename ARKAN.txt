@@ -1,0 +1,145 @@
+{
+  "name": "bakas-simple-wa",
+  "version": "1.0.0",
+  "description": "Simpan kontak dan kirim pesan WhatsApp (wa.me link + optional Twilio)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "generated-by-assistant",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "express": "^4.18.2",
+    "twilio": "^4.4.0"
+  }
+}
+# OPTIONAL: jika ingin enable pengiriman otomatis lewat Twilio
+# Daftarkan akun Twilio dan WhatsApp sandbox atau number yang diizinkan.
+TWILIO_ACCOUNT_SID=your_account_sid_here
+TWILIO_AUTH_TOKEN=your_auth_token_here
+TWILIO_WHATSAPP_FROM=whatsapp:+14155238886
+[]
+// server.js
+// Minimal Express server: API untuk menyimpan kontak dan (opsional) mengirim WhatsApp lewat Twilio.
+// Run: node server.js
+
+const express = require('express');
+const fs = require('fs');
+const path = require('path');
+const cors = require('cors');
+const dotenv = require('dotenv');
+
+dotenv.config();
+
+const DATA_FILE = path.join(__dirname, 'data.json');
+const PORT = process.env.PORT || 3000;
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Serve frontend
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Ensure data file exists
+if (!fs.existsSync(DATA_FILE)) fs.writeFileSync(DATA_FILE, '[]', 'utf8');
+
+function readData() {
+  try {
+    const raw = fs.readFileSync(DATA_FILE, 'utf8') || '[]';
+    return JSON.parse(raw);
+  } catch (e) {
+    console.error('readData error', e);
+    return [];
+  }
+}
+
+function writeData(data) {
+  try {
+    fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf8');
+    return true;
+  } catch (e) {
+    console.error('writeData error', e);
+    return false;
+  }
+}
+
+// Normalize phone: remove non-digits, if starts with 0 -> replace with 62 (Indonesia) as convenience
+function normalizePhone(raw) {
+  const digits = String(raw).replace(/\D/g, '');
+  if (digits.length === 0) return '';
+  if (digits.startsWith('0')) return '62' + digits.slice(1);
+  return digits;
+}
+
+// API: get contacts
+app.get('/api/contacts', (req, res) => {
+  res.json(readData());
+});
+
+// API: create contact
+app.post('/api/contacts', (req, res) => {
+  const { nama, phone, message } = req.body || {};
+  if (!nama || !phone) return res.status(400).json({ ok: false, error: 'nama dan phone diperlukan' });
+
+  const normalized = normalizePhone(phone);
+  const item = {
+    id: Date.now().toString(),
+    nama: String(nama),
+    phone: normalized,
+    message: message || '',
+    created_at: new Date().toISOString()
+  };
+
+  const data = readData();
+  data.push(item);
+  if (!writeData(data)) return res.status(500).json({ ok: false, error: 'gagal menulis data' });
+
+  res.json({ ok: true, item });
+});
+
+// API: delete contact
+app.delete('/api/contacts/:id', (req, res) => {
+  const id = req.params.id;
+  let data = readData();
+  const before = data.length;
+  data = data.filter(d => d.id !== id);
+  if (data.length === before) return res.status(404).json({ ok: false, error: 'id tidak ditemukan' });
+  writeData(data);
+  res.json({ ok: true });
+});
+
+// API: send via server (Twilio) - optional, only works if env configured
+app.post('/api/send/:id', async (req, res) => {
+  const id = req.params.id;
+  const data = readData();
+  const item = data.find(d => d.id === id);
+  if (!item) return res.status(404).json({ ok: false, error: 'kontak tidak ditemukan' });
+
+  const { TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_WHATSAPP_FROM } = process.env;
+  if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !TWILIO_WHATSAPP_FROM) {
+    return res.status(400).json({ ok: false, error: 'Twilio tidak dikonfigurasi. Lihat README.' });
+  }
+
+  try {
+    const client = require('twilio')(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
+    const to = 'whatsapp:+' + item.phone; // Twilio requires whatsapp:+{country}{number}
+    const msg = item.message || `Halo ${item.nama}`;
+    const message = await client.messages.create({
+      from: TWILIO_WHATSAPP_FROM,
+      to,
+      body: msg
+    });
+    return res.json({ ok: true, sid: message.sid });
+  } catch (err) {
+    console.error('twilio send error', err);
+    return res.status(500).json({ ok: false, error: 'gagal mengirim via Twilio', detail: err.message });
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running: http://localhost:${PORT}`);
+});

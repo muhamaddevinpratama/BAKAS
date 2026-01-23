@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BAKAS - Daftar Kontak & Kirim WA</title>
+  <style>
+    body{font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial;line-height:1.4;padding:24px;background:#f7f7f8}
+    .container{max-width:900px;margin:0 auto;background:#fff;padding:20px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.05)}
+    h1{margin-top:0}
+    form label{display:block;margin:8px 0}
+    input, textarea {width:100%;padding:8px;border:1px solid #ddd;border-radius:4px}
+    button{padding:8px 12px;border:none;background:#007bff;color:#fff;border-radius:4px;cursor:pointer}
+    button.secondary{background:#6c757d}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{padding:8px;border-bottom:1px solid #eee;text-align:left}
+    .small{font-size:0.9rem;color:#666}
+    .actions button{margin-right:6px}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Form Daftar Kontak</h1>
+    <p class="small">Masukkan nama, nomor (contoh: 081234567890 atau 6281234567890) dan pesan. Nomor akan dinormalisasi ke format internasional (default 62 untuk awal 0).</p>
+
+    <form id="form">
+      <label>Nama
+        <input type="text" name="nama" id="nama" required />
+      </label>
+      <label>Nomor Telepon
+        <input type="text" name="phone" id="phone" placeholder="0812..." required />
+      </label>
+      <label>Pesan (opsional) — gunakan {nama} jika mau masukkan nama otomatis
+        <textarea name="message" id="message" rows="3" placeholder="Halo {nama}, ini pesan..."></textarea>
+      </label>
+      <div style="margin-top:8px">
+        <button type="submit">Simpan</button>
+      </div>
+    </form>
+
+    <h2>Daftar Kontak</h2>
+    <table id="table">
+      <thead>
+        <tr><th>#</th><th>Nama</th><th>Nomor</th><th>Pesan</th><th>Aksi</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <p class="small" style="margin-top:12px">
+      Tombol "Open WA" akan membuka WhatsApp Web / aplikasi ponsel dengan pesan terisi. Anda harus menekan tombol kirim.
+      Tombol "Send via Server (Twilio)" akan mencoba mengirim dari server secara otomatis — hanya jika Anda sudah konfigurasi Twilio di server.
+    </p>
+  </div>
+
+  <script>
+    // helper: escape HTML
+    function escapeHtml(s) {
+      return String(s || '').replace(/[&<>"']/g, c =>
+        ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]
+      );
+    }
+
+    // Normalize phone client-side: remove non-digits, if starts with 0 -> replace with 62
+    function normalizePhone(raw) {
+      const d = String(raw || '').replace(/\\D/g, '');
+      if (!d) return '';
+      if (d.startsWith('0')) return '62' + d.slice(1);
+      return d;
+    }
+
+    async function fetchContacts() {
+      const res = await fetch('/api/contacts');
+      return res.json();
+    }
+
+    async function saveContact(obj) {
+      const res = await fetch('/api/contacts', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(obj)
+      });
+      return res.json();
+    }
+
+    async function sendViaServer(id) {
+      const res = await fetch('/api/send/' + encodeURIComponent(id), { method: 'POST' });
+      return res.json();
+    }
+
+    function renderTable(items) {
+      const tbody = document.querySelector('#table tbody');
+      if (!items || items.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="small">Belum ada data</td></tr>';
+        return;
+      }
+      tbody.innerHTML = items.map((it, i) => {
+        const message = it.message || `Halo ${it.nama}`;
+        const messageFilled = message.replace(/\{nama\}/g, it.nama);
+        const waUrl = 'https://wa.me/' + encodeURIComponent(it.phone) + '?text=' + encodeURIComponent(messageFilled);
+        return `<tr>
+          <td>${i+1}</td>
+          <td>${escapeHtml(it.nama)}</td>
+          <td>${escapeHtml(it.phone)}</td>
+          <td>${escapeHtml(it.message)}</td>
+          <td class="actions">
+            <button onclick="window.open('${waUrl}','_blank')">Open WA</button>
+            <button onclick="onSendServer('${it.id}')" class="secondary">Send via Server (Twilio)</button>
+            <button onclick="onDelete('${it.id}')" class="secondary">Hapus</button>
+          </td>
+        </tr>`;
+      }).join('');
+    }
+
+    async function refresh() {
+      const items = await fetchContacts();
+      renderTable(items);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('form');
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const nama = document.getElementById('nama').value.trim();
+        const phoneRaw = document.getElementById('phone').value.trim();
+        const message = document.getElementById('message').value.trim();
+        if (!nama || !phoneRaw) { alert('Nama dan nomor diperlukan'); return; }
+        const phone = normalizePhone(phoneRaw);
+        const payload = { nama, phone, message };
+        const res = await saveContact(payload);
+        if (res.ok) {
+          form.reset();
+          refresh();
+          alert('Tersimpan');
+        } else {
+          alert('Error: ' + (res.error || 'gagal'));
+        }
+      });
+
+      refresh();
+    });
+
+    // global functions called from inline handlers
+    window.onSendServer = async function(id) {
+      if (!confirm('Kirim pesan via server (Twilio) ke kontak ini? Pastikan Twilio sudah dikonfigurasi.')) return;
+      const res = await sendViaServer(id);
+      if (res.ok) alert('Pesan dikirim via server. SID: ' + (res.sid || 'n/a'));
+      else alert('Gagal: ' + (res.error || JSON.stringify(res)));
+    };
+
+    window.onDelete = async function(id) {
+      if (!confirm('Hapus kontak?')) return;
+      const res = await fetch('/api/contacts/' + encodeURIComponent(id), { method: 'DELETE' });
+      if (res.ok) {
+        alert('Dihapus');
+        refresh();
+      } else {
+        const body = await res.json().catch(()=>({}));
+        alert('Gagal hapus: ' + (body.error || res.status));
+      }
+    };
+  </script>
+</body>
+</html>
